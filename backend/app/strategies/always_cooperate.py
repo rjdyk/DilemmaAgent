@@ -1,4 +1,4 @@
-from backend.app.models.game import Move
+from app.models.types import Move
 from .base import BaseStrategy
 
 class AlwaysCooperate(BaseStrategy):

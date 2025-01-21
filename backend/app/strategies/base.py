@@ -1,6 +1,7 @@
 from typing import List, Optional
-from backend.app.models.game import Move, RoundResult
+from app.models.types import Move, RoundResult
 from enum import Enum, auto
+
 
 class StrategyType(Enum):
     ALWAYS_COOPERATE = "always_cooperate"

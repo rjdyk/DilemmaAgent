@@ -1,21 +1,9 @@
 from enum import Enum
 from typing import List, Dict, Optional
-from dataclasses import dataclass
 from datetime import datetime
-from backend.app.strategies.base import BaseStrategy, AlwaysCooperate
-
-class Move(Enum):
-    COOPERATE = "cooperate"
-    DEFECT = "defect"
-
-@dataclass
-class RoundResult:
-    round_number: int
-    ai_move: Move
-    opponent_move: Move
-    ai_reasoning: str
-    ai_score: int
-    opponent_score: int
+from app.models.types import Move, RoundResult
+from app.strategies.base import BaseStrategy
+from app.strategies.always_cooperate import AlwaysCooperate
 
 class Game:
     def __init__(self, opponent_strategy: BaseStrategy):

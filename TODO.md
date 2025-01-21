@@ -16,26 +16,26 @@
 
 ## Flask Setup:
 ### Basic Flask Configuration
- [] Import required dependencies and Game class
- [] Create Flask app instance
- [] Configure CORS settings for local development
- [] Set up basic error handlers
- [] Set up storage utilities for game state management
+ [x] Import required dependencies and Game class
+ [x] Create Flask app instance
+ [x] Configure CORS settings for local development
+ [x] Set up basic error handlers
+ [x] Set up storage utilities for game state management
 ### Core API Endpoints
- [] POST /api/game/new - Create new game with specified opponent strategy
- [] POST /api/game/{game_id}/move - Submit AI move for current round
- [] GET /api/game/{game_id}/state - Get current game state
- [] GET /api/game/{game_id}/history - Get full game history
- [] GET /api/strategies - List available opponent strategies
+ [x] POST /api/game/new - Create new game with specified opponent strategy
+ [x] POST /api/game/{game_id}/move - Submit AI move for current round
+ [x] GET /api/game/{game_id}/state - Get current game state
+ [x] GET /api/game/{game_id}/history - Get full game history
+ [x] GET /api/strategies - List available opponent strategies
 ### Storage System (MVP)
- [] Create JSON file-based storage for game states
- [] Implement functions to read/write game states
- [] Implement functions to archive completed games
- [] Add basic concurrency handling
+ [x] Create JSON file-based storage for game states
+ [x] Implement functions to read/write game states
+ [x] Implement functions to archive completed games
+ [x] Add basic concurrency handling
 ### Error Handling
- [] Add 404 handler for invalid game IDs
- [] Add 400 handler for invalid moves/requests
- [] Add 500 handler for API/storage errors
+ [x] Add 404 handler for invalid game IDs
+ [x] Add 400 handler for invalid moves/requests
+ [x] Add 500 handler for API/storage errors
 
 
 ## React Setup:
