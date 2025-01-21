@@ -103,9 +103,27 @@ def make_move(game_id: str):
         data = request.get_json()
         if 'move' not in data or 'reasoning' not in data:
             return jsonify({"error": "Move or reasoning not specified"}), 400
+        
+        # Validate move value
+        valid_moves = ['cooperate', 'defect']
+        if data['move'].lower() not in valid_moves:
+            return jsonify({"error": f"Invalid move. Must be one of: {', '.join(valid_moves)}"}), 400
+         
             
         # Process the move
-        result = game.process_round(data['move'], data['reasoning'])
+        result = game.process_round(data['move'].lower(), data['reasoning'])
+
+        # Validate result object
+        if not result:
+            return jsonify({"error": "Failed to process round"}), 500
+            
+        # Validate required attributes
+        required_attrs = ['round_number', 'ai_move', 'opponent_move', 'ai_score', 'opponent_score']
+        missing_attrs = [attr for attr in required_attrs if not hasattr(result, attr)]
+        if missing_attrs:
+            return jsonify({
+                "error": f"Invalid round result - missing attributes: {', '.join(missing_attrs)}"
+            }), 500
         
         # Check if game is over
         if game.is_game_over():
@@ -129,6 +147,8 @@ def make_move(game_id: str):
         
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
 
 @bp.route('/api/game/<game_id>/history', methods=['GET'])
 def get_game_history(game_id: str):
