@@ -39,14 +39,31 @@
 
 
 ## React Setup:
-[] Clean up create-react-app template
-[] Set up axios with base configuration
-[] Create basic app layout
-[] Add API service module
-[] Create GameBoard component skeleton
-[] Add basic state management (game status, moves)
-[] Create simple form for starting game
-[] Add basic move display
+[x] Clean up create-react-app template
+[x] Set up axios with base configuration
+[x] Create basic app layout
+[x] Add API service module
+[~] Create GameBoard component skeleton (Started with GameSetup)
+[x] Add basic state management (game status, moves)
+[x] Create simple form for starting game
+GameBoard Component:
+[] Create move buttons (Cooperate/Defect)
+[] Add round number and score display
+[] Implement move history table/list
+[] Handle move submission with AI reasoning
+[] Add loading states during API calls
+Analytics Section:
+[] Create TotalScores component
+[] Add CooperationRates component
+[] Implement CooperationRatesOverTime chart
+[] Set up data processing for analytics
+[] Add refresh/update logic for live stats
+Additional Features:
+[] Add complete game history view
+[] Create win rates grid for strategies
+[] Implement round-by-round visualization
+[] Add game completion handling
+[] Set up error boundary for API failures
 
 ## Integration Testing:
 [] Test health endpoint connection
