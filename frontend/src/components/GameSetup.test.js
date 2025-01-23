@@ -50,22 +50,36 @@ describe('GameSetup', () => {
     await act(async () => {
       render(<GameSetup onStartGame={mockOnStartGame} />);
     });
-
-    await waitFor(() => {
-      expect(screen.getAllByRole('combobox')).toHaveLength(2);
-    });
-
+  
+    // Get the select elements
+    const selects = screen.getAllByRole('combobox');
+    expect(selects).toHaveLength(2);
+    
+    // Set player 1 strategy
     await act(async () => {
-      const [player1Select, player2Select] = screen.getAllByRole('combobox');
-      fireEvent.change(player1Select, { target: { value: 'tit_for_tat' } });
-      fireEvent.change(player2Select, { target: { value: 'always_cooperate' } });
+      fireEvent.change(selects[0], { 
+        target: { value: 'tit_for_tat' }
+      });
     });
-
+  
+    // Set player 2 strategy
     await act(async () => {
-      const startButton = screen.getByText('Run Game');
-      fireEvent.click(startButton);
+      console.log('Player 2 select props:', {
+        onChange: selects[1].onChange,
+        value: selects[1].value,
+        options: selects[1].options
+      });
+      fireEvent.change(selects[1], { 
+        target: { value: 'always_cooperate' }
+      });
+      console.log('After player 2 change event fired');
     });
-
+  
+    // Click the button
+    await act(async () => {
+      fireEvent.click(screen.getByText('Run Game'));
+    });
+  
     expect(mockOnStartGame).toHaveBeenCalledWith('tit_for_tat', 'always_cooperate', 5);
   });
 

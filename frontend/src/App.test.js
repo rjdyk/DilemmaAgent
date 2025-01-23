@@ -38,7 +38,7 @@ describe('App', () => {
       current_round: 0,
       max_rounds: 5,
       is_game_over: false,
-      scores: { ai: 0, opponent: 0 }
+      scores: { player1: 0, player2: 0 }
     });
   });
 

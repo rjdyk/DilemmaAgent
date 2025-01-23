@@ -2,6 +2,29 @@
 import React, { useState, useEffect } from 'react';
 import { getStrategies } from '../utils/api';
 
+const StrategySelect = ({ value, onChange, label, strategies }) => (
+  <div className="mb-4">
+    <label htmlFor={`strategy-${label}`} className="block mb-2">{label}</label>
+    <select 
+      id={`strategy-${label}`}
+      value={value}
+      onChange={(e) => {
+        console.log(`${label} onChange fired with value:`, e.target.value);
+        onChange(e.target.value);
+        console.log(`${label} after onChange called`);
+      }}
+      className="border p-2 w-full"
+    >
+      <option value="">Select a strategy</option>
+      {strategies.map(strategy => (
+        <option key={strategy.id} value={strategy.id}>
+          {strategy.name}
+        </option>
+      ))}
+    </select>
+  </div>
+);
+
 function GameSetup({ onStartGame }) {
   const [strategies, setStrategies] = useState([]);
   const [player1Strategy, setPlayer1Strategy] = useState('');
@@ -17,6 +40,7 @@ function GameSetup({ onStartGame }) {
         const strategies = await getStrategies();
         if (mounted) {
           setStrategies(strategies);
+          console.log('Strategies loaded:', strategies);
         }
       } catch (err) {
         if (mounted) {
@@ -36,30 +60,23 @@ function GameSetup({ onStartGame }) {
   }, []);
 
   const handleSubmit = () => {
+    console.log('Submit clicked', {player1Strategy, player2Strategy, rounds});
+    
     if (!player1Strategy || !player2Strategy) {
+      console.log('Validation failed');
       setError('Please select strategies for both players');
       return;
     }
+    console.log('Calling onStartGame');
     onStartGame(player1Strategy, player2Strategy, rounds);
   };
+  
 
-  const StrategySelect = ({ value, onChange, label }) => (
-    <div className="mb-4">
-      <label className="block mb-2">{label}</label>
-      <select 
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="border p-2 w-full"
-      >
-        <option value="">Select a strategy</option>
-        {strategies.map(strategy => (
-          <option key={strategy.id} value={strategy.id}>
-            {strategy.name}
-          </option>
-        ))}
-      </select>
-    </div>
-  );
+  // Top of component:
+  useEffect(() => {
+    console.log('State update - player1Strategy:', player1Strategy, 'player2Strategy:', player2Strategy);
+  }, [player1Strategy, player2Strategy]);
+
 
   return (
     <div className="mb-6">
@@ -83,11 +100,13 @@ function GameSetup({ onStartGame }) {
         value={player1Strategy}
         onChange={setPlayer1Strategy}
         label="Player 1 Strategy"
+        strategies={strategies}
       />
       <StrategySelect 
         value={player2Strategy}
         onChange={setPlayer2Strategy}
         label="Player 2 Strategy"
+        strategies={strategies}
       />
       <button 
         onClick={handleSubmit}
