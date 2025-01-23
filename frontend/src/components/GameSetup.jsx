@@ -40,7 +40,6 @@ function GameSetup({ onStartGame }) {
         const strategies = await getStrategies();
         if (mounted) {
           setStrategies(strategies);
-          console.log('Strategies loaded:', strategies);
         }
       } catch (err) {
         if (mounted) {
@@ -59,23 +58,17 @@ function GameSetup({ onStartGame }) {
     };
   }, []);
 
+
+
   const handleSubmit = () => {
-    console.log('Submit clicked', {player1Strategy, player2Strategy, rounds});
     
     if (!player1Strategy || !player2Strategy) {
       console.log('Validation failed');
       setError('Please select strategies for both players');
       return;
     }
-    console.log('Calling onStartGame');
     onStartGame(player1Strategy, player2Strategy, rounds);
   };
-  
-
-  // Top of component:
-  useEffect(() => {
-    console.log('State update - player1Strategy:', player1Strategy, 'player2Strategy:', player2Strategy);
-  }, [player1Strategy, player2Strategy]);
 
 
   return (

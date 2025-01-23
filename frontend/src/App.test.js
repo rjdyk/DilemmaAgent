@@ -16,6 +16,15 @@ afterAll(() => {
   console.error.mockRestore();
 });
 
+// At the top of App.test.js, add:
+beforeEach(() => {
+  jest.clearAllMocks();
+});
+
+afterEach(() => {
+  jest.clearAllTimers();
+});
+
 describe('App', () => {
   const mockStrategies = [
     { id: 'tit_for_tat', name: 'Tit for Tat' },
@@ -55,12 +64,16 @@ describe('App', () => {
     });
     
     await waitFor(() => {
-      expect(screen.getByText('Tit for Tat')).toBeInTheDocument();
+      // Look for strategy dropdowns by their labels
+      const player1Select = screen.getByLabelText('Player 1 Strategy');
+      const player2Select = screen.getByLabelText('Player 2 Strategy');
+      expect(player1Select).toBeInTheDocument();
+      expect(player2Select).toBeInTheDocument();
     });
-    
+
     await act(async () => {
-      // Select strategies for both players
-      const [player1Select, player2Select] = screen.getAllByRole('combobox');
+      const player1Select = screen.getByLabelText('Player 1 Strategy');
+      const player2Select = screen.getByLabelText('Player 2 Strategy');
       fireEvent.change(player1Select, { target: { value: 'tit_for_tat' } });
       fireEvent.change(player2Select, { target: { value: 'always_cooperate' } });
     });
@@ -73,8 +86,7 @@ describe('App', () => {
     await waitFor(() => {
       expect(screen.getByText(/Game in progress/)).toBeInTheDocument();
     });
-  });
-
+});
   test('shows error message when game creation fails', async () => {
     createGame.mockRejectedValue({ 
       response: { 
@@ -87,13 +99,17 @@ describe('App', () => {
     });
     
     await waitFor(() => {
-      expect(screen.getByText('Tit for Tat')).toBeInTheDocument();
+      const player1Select = screen.getByLabelText('Player 1 Strategy');
+      const player2Select = screen.getByLabelText('Player 2 Strategy');
+      expect(player1Select).toBeInTheDocument();
+      expect(player2Select).toBeInTheDocument();
     });
 
     await act(async () => {
-      // Select a strategy
-      const strategySelect = screen.getByRole('combobox');
-      fireEvent.change(strategySelect, { target: { value: 'tit_for_tat' } });
+      const player1Select = screen.getByLabelText('Player 1 Strategy');
+      fireEvent.change(player1Select, { target: { value: 'tit_for_tat' } });
+      const player2Select = screen.getByLabelText('Player 2 Strategy');
+      fireEvent.change(player2Select, { target: { value: 'always_cooperate' } });
     });
     
     await act(async () => {
