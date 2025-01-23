@@ -1,5 +1,85 @@
 # TODO
 
+# Phase 2
+## 1. Strategy Implementation
+- [ ] Implement AlwaysDefect strategy
+- [ ] Implement TitForTat strategy
+- [ ] Implement Pavlov strategy
+- [ ] Implement Random strategy
+- [ ] Implement GrimTrigger strategy
+- [ ] Add tests for each strategy implementation
+- [ ] Update strategy registry with new implementations
+
+## 2. Game Flow Control
+### Backend
+- [ ] Add gameMode (AUTO/MANUAL) to Game class
+- [ ] Add runAllRounds() method for AUTO mode
+- [ ] Add gameStatus field (ACTIVE/COMPLETE/ERROR)
+- [ ] Add error message tracking
+- [ ] Update game state validation
+- [ ] Add tests for both game modes
+
+### Frontend
+#### GameSetup Component
+- [ ] Add strategy selection dropdowns
+- [ ] Add game mode toggle
+- [ ] Add start game validation
+- [ ] Add loading states
+
+#### GameBoard Component
+- [ ] Create round history table
+- [ ] Add current scores display
+- [ ] Add "Next Round" button for manual mode
+- [ ] Add "Auto-Complete" button
+- [ ] Implement loading states
+- [ ] Add error message display
+
+#### Results Component
+- [ ] Display final scores
+- [ ] Show complete round history
+- [ ] Calculate and display statistics
+  - [ ] Cooperation rates
+  - [ ] Average scores
+  - [ ] Win/loss status
+- [ ] Add "New Game" button
+
+## 3. Integration
+### API Functions
+- [ ] Implement getStrategies()
+- [ ] Implement createGame()
+- [ ] Implement getGameState()
+- [ ] Implement makeMove()
+- [ ] Implement completeGame()
+- [ ] Add error handling
+
+### State Management
+- [ ] Add game state transitions
+- [ ] Implement game state polling
+- [ ] Add error state handling
+- [ ] Add loading state management
+
+## 4. Testing
+- [ ] Unit tests for all strategies
+- [ ] Integration tests for game flow
+- [ ] API endpoint tests
+- [ ] Frontend component tests
+- [ ] End-to-end game flow tests
+
+## 5. Documentation
+- [ ] Add JSDoc comments to frontend components
+- [ ] Update API documentation
+- [ ] Add setup instructions
+- [ ] Document testing procedures
+
+## Future Tasks (Post-MVP)
+- [ ] AI agent integration
+- [ ] Retry logic for API failures
+- [ ] Enhanced error handling
+- [ ] Performance optimizations
+- [ ] Advanced statistics
+
+---
+# Phase 1
 ## Backend Game Logic:
 [x] Create Game class with:
     [x] Initialize game state (scores, round number, history)
@@ -46,28 +126,3 @@
 [~] Create GameBoard component skeleton (Started with GameSetup)
 [x] Add basic state management (game status, moves)
 [x] Create simple form for starting game
-GameBoard Component:
-[] Create move buttons (Cooperate/Defect)
-[] Add round number and score display
-[] Implement move history table/list
-[] Handle move submission with AI reasoning
-[] Add loading states during API calls
-Analytics Section:
-[] Create TotalScores component
-[] Add CooperationRates component
-[] Implement CooperationRatesOverTime chart
-[] Set up data processing for analytics
-[] Add refresh/update logic for live stats
-Additional Features:
-[] Add complete game history view
-[] Create win rates grid for strategies
-[] Implement round-by-round visualization
-[] Add game completion handling
-[] Set up error boundary for API failures
-
-## Integration Testing:
-[] Test health endpoint connection
-[] Test game start flow
-[] Test basic move submission
-[] Verify game state updates
-[] Test error handling

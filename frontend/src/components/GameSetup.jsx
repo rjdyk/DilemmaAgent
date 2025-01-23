@@ -4,7 +4,8 @@ import { getStrategies } from '../utils/api';
 
 function GameSetup({ onStartGame }) {
   const [strategies, setStrategies] = useState([]);
-  const [selectedStrategy, setSelectedStrategy] = useState('');
+  const [player1Strategy, setPlayer1Strategy] = useState('');
+  const [player2Strategy, setPlayer2Strategy] = useState('');
   const [rounds, setRounds] = useState(5);
   const [error, setError] = useState(null);
 
@@ -20,7 +21,6 @@ function GameSetup({ onStartGame }) {
       } catch (err) {
         if (mounted) {
           setError('Failed to load strategies');
-          // Only log in development
           if (process.env.NODE_ENV === 'development') {
             console.error('Error loading strategies:', err);
           }
@@ -36,12 +36,30 @@ function GameSetup({ onStartGame }) {
   }, []);
 
   const handleSubmit = () => {
-    if (!selectedStrategy) {
-      setError('Please select a strategy');
+    if (!player1Strategy || !player2Strategy) {
+      setError('Please select strategies for both players');
       return;
     }
-    onStartGame(selectedStrategy, rounds);
+    onStartGame(player1Strategy, player2Strategy, rounds);
   };
+
+  const StrategySelect = ({ value, onChange, label }) => (
+    <div className="mb-4">
+      <label className="block mb-2">{label}</label>
+      <select 
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="border p-2 w-full"
+      >
+        <option value="">Select a strategy</option>
+        {strategies.map(strategy => (
+          <option key={strategy.id} value={strategy.id}>
+            {strategy.name}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
 
   return (
     <div className="mb-6">
@@ -61,21 +79,16 @@ function GameSetup({ onStartGame }) {
           className="border p-2"
         />
       </div>
-      <div className="mb-4">
-        <label className="block mb-2">Strategy</label>
-        <select 
-          value={selectedStrategy}
-          onChange={(e) => setSelectedStrategy(e.target.value)}
-          className="border p-2 w-full"
-        >
-          <option value="">Select a strategy</option>
-          {strategies.map(strategy => (
-            <option key={strategy.id} value={strategy.id}>
-              {strategy.name}
-            </option>
-          ))}
-        </select>
-      </div>
+      <StrategySelect 
+        value={player1Strategy}
+        onChange={setPlayer1Strategy}
+        label="Player 1 Strategy"
+      />
+      <StrategySelect 
+        value={player2Strategy}
+        onChange={setPlayer2Strategy}
+        label="Player 2 Strategy"
+      />
       <button 
         onClick={handleSubmit}
         className="bg-black text-white px-4 py-2 w-full"

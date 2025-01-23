@@ -8,10 +8,14 @@ function App() {
   const [gameState, setGameState] = useState(null);
   const [error, setError] = useState(null);
 
-  const handleStartGame = async (strategy, rounds) => {
+  const handleStartGame = async (player1Strategy, player2Strategy, rounds) => {
     try {
       setError(null);
-      const response = await createGame(strategy);
+      const response = await createGame({
+        player1Strategy,
+        player2Strategy,
+        rounds
+      });
       setGameId(response.game_id);
       setGameState(response);
     } catch (err) {

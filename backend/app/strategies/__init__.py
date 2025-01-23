@@ -19,6 +19,7 @@ class StrategyType(Enum):
     PAVLOV = "pavlov"
     RANDOM = "random"
     GRIM = "grim"
+    AI_AGENT = "ai_agent"
 
 
 # Registry mapping strategy types to their implementing classes
@@ -64,7 +65,7 @@ def create_strategy(strategy_type: StrategyType) -> BaseStrategy:
         ValueError: If the strategy type is not registered
     """
     if strategy_type not in _strategy_registry:
-        raise ValueError(f"Unknown strategy type: {strategy_type}")
+        raise ValueError(f"Strategy {strategy_type.value} is not implemented yet")
     
     strategy_class = _strategy_registry[strategy_type]
     return strategy_class()

@@ -9,7 +9,6 @@ from app.strategies import StrategyType, create_strategy, get_available_strategi
 from app.utils.storage import GameStorage
 from app.utils.history import GameHistory
 
-
 bp = Blueprint('api', __name__)
 
 # Initialize storage
@@ -47,25 +46,29 @@ def get_strategies():
 
 @bp.route('/api/game/new', methods=['POST'])
 def create_game():
-    """Create a new game with specified strategy"""
+    """Create a new game with two specified strategies"""
     try:
-        # Get strategy from request
+        # Get strategies from request
         data = request.get_json()
-        if 'strategy' not in data:
-            return jsonify({"error": "Strategy not specified"}), 400
+        if 'player1Strategy' not in data or 'player2Strategy' not in data:
+            return jsonify({"error": "Both player strategies must be specified"}), 400
             
-        # Create strategy instance
-        strategy_type = StrategyType(data['strategy'])
-        strategy = create_strategy(strategy_type)
+        # Create strategy instances
+        strategy1_type = StrategyType(data['player1Strategy'])
+        strategy2_type = StrategyType(data['player2Strategy'])
+        strategy1 = create_strategy(strategy1_type)
+        strategy2 = create_strategy(strategy2_type)
         
         # Create and store new game
-        game_id, game = game_storage.create_game(strategy)
+        game_id, game = game_storage.create_game(strategy1, strategy2)
         
         return jsonify({
             "game_id": game_id,
             "status": "created",
             "current_round": 0,
-            "max_rounds": game.max_rounds
+            "max_rounds": game.max_rounds,
+            "player1_strategy": strategy1_type.value,
+            "player2_strategy": strategy2_type.value
         })
         
     except ValueError as e:
@@ -74,7 +77,6 @@ def create_game():
 @bp.route('/api/game/<game_id>/state', methods=['GET'])
 def get_game_state(game_id: str):
     """Get current state of specified game"""
-    # Get game from active storage
     game = game_storage.get_game(game_id)
     if not game:
         return jsonify({"error": "Game not found"}), 404
@@ -85,46 +87,24 @@ def get_game_state(game_id: str):
         "max_rounds": game.max_rounds,
         "is_game_over": game.is_game_over(),
         "scores": {
-            "ai": game.ai_total_score,
-            "opponent": game.opponent_total_score
+            "player1": game.player1_total_score,
+            "player2": game.player2_total_score
         }
     })
 
 @bp.route('/api/game/<game_id>/move', methods=['POST'])
 def make_move(game_id: str):
-    """Process an AI move in the specified game"""
-    # Get game from active storage
+    """Process a round in the specified game"""
     game = game_storage.get_game(game_id)
     if not game:
         return jsonify({"error": "Game not found"}), 404
     
     try:
-        # Get move from request
-        data = request.get_json()
-        if 'move' not in data or 'reasoning' not in data:
-            return jsonify({"error": "Move or reasoning not specified"}), 400
-        
-        # Validate move value
-        valid_moves = ['cooperate', 'defect']
-        if data['move'].lower() not in valid_moves:
-            return jsonify({"error": f"Invalid move. Must be one of: {', '.join(valid_moves)}"}), 400
-         
-            
-        # Process the move
-        result = game.process_round(data['move'].lower(), data['reasoning'])
-
-        # Validate result object
+        # Process the round - moves come from strategies
+        result = game.process_round()
         if not result:
             return jsonify({"error": "Failed to process round"}), 500
-            
-        # Validate required attributes
-        required_attrs = ['round_number', 'ai_move', 'opponent_move', 'ai_score', 'opponent_score']
-        missing_attrs = [attr for attr in required_attrs if not hasattr(result, attr)]
-        if missing_attrs:
-            return jsonify({
-                "error": f"Invalid round result - missing attributes: {', '.join(missing_attrs)}"
-            }), 500
-        
+
         # Check if game is over
         if game.is_game_over():
             # Save to history and remove from active games
@@ -134,14 +114,14 @@ def make_move(game_id: str):
         # Return round result
         return jsonify({
             "round_number": result.round_number,
-            "ai_move": result.ai_move,
-            "opponent_move": result.opponent_move,
-            "ai_score": result.ai_score,
-            "opponent_score": result.opponent_score,
+            "player1_move": result.player1_move.value,
+            "player2_move": result.player2_move.value,
+            "player1_score": result.player1_score,
+            "player2_score": result.player2_score,
             "game_over": game.is_game_over(),
             "scores": {
-                "ai": game.ai_total_score,
-                "opponent": game.opponent_total_score
+                "player1": game.player1_total_score,
+                "player2": game.player2_total_score
             }
         })
         
@@ -160,11 +140,12 @@ def get_game_history(game_id: str):
         rounds = [
             {
                 "round_number": r.round_number,
-                "ai_move": r.ai_move,
-                "opponent_move": r.opponent_move,
-                "ai_reasoning": r.ai_reasoning,
-                "ai_score": r.ai_score,
-                "opponent_score": r.opponent_score
+                "player1_move": r.player1_move.value,
+                "player2_move": r.player2_move.value,
+                "player1_reasoning": r.player1_reasoning,
+                "player2_reasoning": r.player2_reasoning,
+                "player1_score": r.player1_score,
+                "player2_score": r.player2_score
             }
             for r in game.rounds
         ]
@@ -174,8 +155,8 @@ def get_game_history(game_id: str):
             "is_active": True,
             "rounds": rounds,
             "scores": {
-                "ai": game.ai_total_score,
-                "opponent": game.opponent_total_score
+                "player1": game.player1_total_score,
+                "player2": game.player2_total_score
             }
         })
     
@@ -190,5 +171,3 @@ def get_game_history(game_id: str):
         })
         
     return jsonify({"error": "Game not found"}), 404
-
-

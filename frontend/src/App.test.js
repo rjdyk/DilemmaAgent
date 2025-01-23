@@ -59,13 +59,13 @@ describe('App', () => {
     });
     
     await act(async () => {
-      // Select a strategy
-      const strategySelect = screen.getByRole('combobox');
-      fireEvent.change(strategySelect, { target: { value: 'tit_for_tat' } });
+      // Select strategies for both players
+      const [player1Select, player2Select] = screen.getAllByRole('combobox');
+      fireEvent.change(player1Select, { target: { value: 'tit_for_tat' } });
+      fireEvent.change(player2Select, { target: { value: 'always_cooperate' } });
     });
 
     await act(async () => {
-      // Click the start button
       const startButton = screen.getByText('Run Game');
       fireEvent.click(startButton);
     });

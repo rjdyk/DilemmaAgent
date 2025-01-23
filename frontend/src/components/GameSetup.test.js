@@ -44,7 +44,7 @@ describe('GameSetup', () => {
     });
   });
 
-  test('calls onStartGame with selected strategy and rounds', async () => {
+  test('calls onStartGame with both selected strategies and rounds', async () => {
     const mockOnStartGame = jest.fn();
     
     await act(async () => {
@@ -52,35 +52,33 @@ describe('GameSetup', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('Tit for Tat')).toBeInTheDocument();
+      expect(screen.getAllByRole('combobox')).toHaveLength(2);
     });
 
     await act(async () => {
-      // Select a strategy
-      const strategySelect = screen.getByRole('combobox');
-      fireEvent.change(strategySelect, { target: { value: 'tit_for_tat' } });
+      const [player1Select, player2Select] = screen.getAllByRole('combobox');
+      fireEvent.change(player1Select, { target: { value: 'tit_for_tat' } });
+      fireEvent.change(player2Select, { target: { value: 'always_cooperate' } });
     });
 
     await act(async () => {
-      // Click the start button
       const startButton = screen.getByText('Run Game');
       fireEvent.click(startButton);
     });
 
-    expect(mockOnStartGame).toHaveBeenCalledWith('tit_for_tat', 5);
+    expect(mockOnStartGame).toHaveBeenCalledWith('tit_for_tat', 'always_cooperate', 5);
   });
 
-  test('shows error when trying to start without selecting strategy', async () => {
+  test('shows error when trying to start without selecting both strategies', async () => {
     await act(async () => {
       render(<GameSetup onStartGame={() => {}} />);
     });
 
     await act(async () => {
-      // Click start without selecting strategy
       const startButton = screen.getByText('Run Game');
       fireEvent.click(startButton);
     });
 
-    expect(screen.getByText('Please select a strategy')).toBeInTheDocument();
+    expect(screen.getByText('Please select strategies for both players')).toBeInTheDocument();
   });
 });

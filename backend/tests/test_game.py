@@ -5,39 +5,59 @@ from app.strategies.always_cooperate import AlwaysCooperate
 
 def test_game_initialization():
     """Test that a new game is properly initialized"""
-    strategy = AlwaysCooperate()
-    game = Game(strategy)
+    player1_strategy = AlwaysCooperate()
+    player2_strategy = AlwaysCooperate()
+    game = Game(player1_strategy, player2_strategy)
     
     assert game.current_round == 0
     assert game.max_rounds == 10
     assert game.game_over == False
     assert len(game.rounds) == 0
-    assert game.ai_total_score == 0
-    assert game.opponent_total_score == 0
+    assert game.player1_total_score == 0
+    assert game.player2_total_score == 0
 
 def test_valid_move_processing():
     """Test that a valid move is properly processed"""
-    strategy = AlwaysCooperate()  # Will always cooperate
-    game = Game(strategy)
+    player1_strategy = AlwaysCooperate()  
+    player2_strategy = AlwaysCooperate()  
+    game = Game(player1_strategy, player2_strategy)
     
-    # Process one round where AI cooperates
-    result = game.process_round("cooperate", "Test reasoning")
+    # Process one round - both should cooperate based on their strategies
+    result = game.process_round()
     
     assert result is not None
     assert result.round_number == 1
-    assert result.ai_move == Move.COOPERATE
-    assert result.opponent_move == Move.COOPERATE
-    assert result.ai_score == 3  # Both cooperated, so both get 3 points
-    assert result.opponent_score == 3
+    assert result.player1_move == Move.COOPERATE
+    assert result.player2_move == Move.COOPERATE
+    assert result.player1_score == 3  # Both cooperated, so both get 3 points
+    assert result.player2_score == 3
     assert game.current_round == 1
     assert len(game.rounds) == 1
 
-def test_invalid_move():
-    """Test that invalid moves are rejected"""
-    strategy = AlwaysCooperate()
-    game = Game(strategy)
+def test_player_moves():
+    """Test that both players' strategies are correctly used"""
+    player1_strategy = AlwaysCooperate()
+    player2_strategy = AlwaysCooperate()
+    game = Game(player1_strategy, player2_strategy)
     
-    result = game.process_round("invalid_move", "Test reasoning")
-    assert result is None
-    assert game.current_round == 0
-    assert len(game.rounds) == 0
+    move1 = game.get_player1_move()
+    move2 = game.get_player2_move()
+    
+    assert move1 == Move.COOPERATE
+    assert move2 == Move.COOPERATE
+
+def test_game_over():
+    """Test that game ends after max rounds"""
+    player1_strategy = AlwaysCooperate()
+    player2_strategy = AlwaysCooperate()
+    game = Game(player1_strategy, player2_strategy)
+    
+    # Play max_rounds
+    for _ in range(game.max_rounds):
+        game.process_round()
+        
+    assert game.is_game_over()
+    
+    # Should not be able to play another round
+    with pytest.raises(ValueError):
+        game.process_round()

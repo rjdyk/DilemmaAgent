@@ -18,11 +18,12 @@ class GameHistory:
         game_data = {
             "game_id": game_id,
             "timestamp": game.timestamp.isoformat(),
-            "opponent_strategy": game.opponent_strategy.__class__.__name__,
+            "player1_strategy": game.player1_strategy.__class__.__name__,
+            "player2_strategy": game.player2_strategy.__class__.__name__,
             "rounds": [vars(round) for round in game.rounds],
             "final_scores": {
-                "ai": game.ai_total_score,
-                "opponent": game.opponent_total_score
+                "player1": game.player1_total_score,
+                "player2": game.player2_total_score
             }
         }
         history["completed_games"].append(game_data)

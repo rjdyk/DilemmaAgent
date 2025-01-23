@@ -18,28 +18,31 @@ def history(tmp_path):
 
 def test_game_storage_creation(storage):
     """Test creating and retrieving a game"""
-    strategy = AlwaysCooperate()
-    game_id, game = storage.create_game(strategy)
+    player1_strategy = AlwaysCooperate()
+    player2_strategy = AlwaysCooperate()
+    game_id, game = storage.create_game(player1_strategy, player2_strategy)
     
     assert game_id is not None
     assert storage.get_game(game_id) is game
 
 def test_game_storage_removal(storage):
     """Test removing a game from storage"""
-    strategy = AlwaysCooperate()
-    game_id, _ = storage.create_game(strategy)
+    player1_strategy = AlwaysCooperate()
+    player2_strategy = AlwaysCooperate()
+    game_id, _ = storage.create_game(player1_strategy, player2_strategy)
     
     storage.remove_game(game_id)
     assert storage.get_game(game_id) is None
 
 def test_game_history_save_and_retrieve(history):
     """Test saving and retrieving a completed game"""
-    strategy = AlwaysCooperate()
-    game = Game(strategy)
+    player1_strategy = AlwaysCooperate()
+    player2_strategy = AlwaysCooperate()
+    game = Game(player1_strategy, player2_strategy)
     game_id = "test_id"
     
     # Play a round
-    game.process_round("cooperate", "Test reasoning")
+    game.process_round()
     game.game_over = True
     
     # Save game
