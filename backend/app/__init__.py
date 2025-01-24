@@ -5,8 +5,15 @@ from flask_cors import CORS
 def create_app(testing=False):
     """Create and configure the Flask app"""
     app = Flask(__name__)
-    CORS(app)
-    
+    print("Configuring CORS for origins:", "http://localhost:3000")
+    CORS(app, resources={
+        r"/*": {
+            "origins": "*",
+            "methods": ["GET", "POST", "OPTIONS"],
+            "allow_headers": ["Content-Type", "Authorization"],
+            "max_age": 3600
+        }
+    })
     if testing:
         app.config['TESTING'] = True
         # Add any test-specific configuration

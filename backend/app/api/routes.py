@@ -9,7 +9,7 @@ from app.strategies import StrategyType, create_strategy, get_available_strategi
 from app.utils.storage import GameStorage
 from app.utils.history import GameHistory
 
-bp = Blueprint('api', __name__)
+bp = Blueprint('api', __name__, url_prefix='/api')
 
 # Initialize storage
 game_storage = GameStorage()
@@ -33,7 +33,7 @@ def value_error(error):
     return jsonify({"error": str(error)}), 400
 
 # Routes
-@bp.route('/api/strategies', methods=['GET'])
+@bp.route('/strategies', methods=['GET'])
 def get_strategies():
     """Get list of available opponent strategies"""
     strategies = get_available_strategies()
@@ -44,7 +44,7 @@ def get_strategies():
         ]
     })
 
-@bp.route('/api/game/new', methods=['POST'])
+@bp.route('/game/new', methods=['POST'])
 def create_game():
     """Create a new game with two specified strategies"""
     try:
@@ -74,7 +74,7 @@ def create_game():
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
 
-@bp.route('/api/game/<game_id>/state', methods=['GET'])
+@bp.route('/game/<game_id>/state', methods=['GET'])
 def get_game_state(game_id: str):
     """Get current state of specified game"""
     game = game_storage.get_game(game_id)
@@ -92,7 +92,7 @@ def get_game_state(game_id: str):
         }
     })
 
-@bp.route('/api/game/<game_id>/move', methods=['POST'])
+@bp.route('/game/<game_id>/move', methods=['POST'])
 def make_move(game_id: str):
     """Process a round in the specified game"""
     game = game_storage.get_game(game_id)
@@ -130,7 +130,7 @@ def make_move(game_id: str):
     except Exception as e:
         return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
 
-@bp.route('/api/game/<game_id>/history', methods=['GET'])
+@bp.route('/game/<game_id>/history', methods=['GET'])
 def get_game_history(game_id: str):
     """Get full history of specified game"""
     # First check active games

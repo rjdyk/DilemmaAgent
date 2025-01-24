@@ -1,34 +1,48 @@
-// src/utils/api.js
 import axios from 'axios';
 
+const BASE_URL = 'http://localhost:5001/api';
+
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: BASE_URL,
   headers: {
     'Content-Type': 'application/json'
-  }
+  },
+  withCredentials: false,
+  crossDomain: true
 });
 
-export const getStrategies = () => api.get('/strategies');
-
-export const createGame = async (player1Strategy, player2Strategy, rounds) => {
-  const response = await fetch('/api/game/new', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      player1Strategy,
-      player2Strategy,
-      rounds
-    }),
-  });
-  if (!response.ok) {
-    throw new Error('Failed to create game');
+export const getStrategies = async () => {
+  console.log('Fetching strategies from:', BASE_URL + '/strategies');
+  try {
+    const response = await api.get('/strategies');
+    console.log('Response:', response);
+    return response.data.strategies;
+  } catch (error) {
+    console.error('Error fetching strategies:', error.response || error);
+    throw error;
   }
-  return response.json();
 };
 
-export const getGameState = (gameId) => api.get(`/game/${gameId}/state`);
-export const makeMove = (gameId, move, reasoning) => 
-  api.post(`/game/${gameId}/move`, { move, reasoning });
-export const getGameHistory = (gameId) => api.get(`/game/${gameId}/history`);
+export const createGame = async (player1Strategy, player2Strategy, rounds) => {
+  const response = await api.post('/game/new', {
+    player1Strategy,
+    player2Strategy,
+    rounds
+  });
+  return response.data;
+};
+
+export const getGameState = async (gameId) => {
+  const response = await api.get(`/game/${gameId}/state`);
+  return response.data;
+};
+
+export const makeMove = async (gameId, move, reasoning) => {
+  const response = await api.post(`/game/${gameId}/move`, { move, reasoning });
+  return response.data;
+};
+
+export const getGameHistory = async (gameId) => {
+  const response = await api.get(`/game/${gameId}/history`);
+  return response.data;
+};
