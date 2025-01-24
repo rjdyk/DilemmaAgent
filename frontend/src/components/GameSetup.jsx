@@ -59,15 +59,14 @@ function GameSetup({ onStartGame }) {
   }, []);
 
 
-
   const handleSubmit = () => {
-    
     if (!player1Strategy || !player2Strategy) {
       console.log('Validation failed');
       setError('Please select strategies for both players');
       return;
     }
-    onStartGame(player1Strategy, player2Strategy, rounds);
+    console.log({player1Strategy, player2Strategy, rounds})
+    onStartGame({player1Strategy, player2Strategy, rounds});
   };
 
 

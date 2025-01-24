@@ -23,7 +23,8 @@ export const getStrategies = async () => {
   }
 };
 
-export const createGame = async (player1Strategy, player2Strategy, rounds) => {
+export const createGame = async (params) => {
+  const { player1Strategy, player2Strategy, rounds } = params;
   const response = await api.post('/game/new', {
     player1Strategy,
     player2Strategy,
