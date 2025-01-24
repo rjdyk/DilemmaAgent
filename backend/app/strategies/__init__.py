@@ -3,12 +3,11 @@ from typing import Dict, Type
 
 from .base import BaseStrategy
 from .always_cooperate import AlwaysCooperate
-# Import other strategies as they are implemented
-# from .always_defect import AlwaysDefect
-# from .tit_for_tat import TitForTat
-# from .pavlov import Pavlov
-# from .random import RandomStrategy
-# from .grim import GrimTrigger
+from .always_defect import AlwaysDefect
+from .tit_for_tat import TitForTat
+from .pavlov import Pavlov
+from .random_strategy import RandomStrategy
+from .grim import GrimTrigger
 
 
 class StrategyType(Enum):
@@ -25,12 +24,11 @@ class StrategyType(Enum):
 # Registry mapping strategy types to their implementing classes
 _strategy_registry: Dict[StrategyType, Type[BaseStrategy]] = {
     StrategyType.ALWAYS_COOPERATE: AlwaysCooperate,
-    # Add other strategies as they are implemented
-    # StrategyType.ALWAYS_DEFECT: AlwaysDefect,
-    # StrategyType.TIT_FOR_TAT: TitForTat,
-    # StrategyType.PAVLOV: Pavlov,
-    # StrategyType.RANDOM: RandomStrategy,
-    # StrategyType.GRIM: GrimTrigger,
+    StrategyType.ALWAYS_DEFECT: AlwaysDefect,
+    StrategyType.TIT_FOR_TAT: TitForTat,
+    StrategyType.PAVLOV: Pavlov,
+    StrategyType.RANDOM: RandomStrategy,
+    StrategyType.GRIM: GrimTrigger,
 }
 
 

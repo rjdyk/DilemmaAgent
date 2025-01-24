@@ -2,13 +2,13 @@
 
 # Phase 2
 ## 1. Strategy Implementation
-- [ ] Implement AlwaysDefect strategy
-- [ ] Implement TitForTat strategy
-- [ ] Implement Pavlov strategy
-- [ ] Implement Random strategy
-- [ ] Implement GrimTrigger strategy
-- [ ] Add tests for each strategy implementation
-- [ ] Update strategy registry with new implementations
+- [x] Implement AlwaysDefect strategy
+- [x] Implement TitForTat strategy
+- [x] Implement Pavlov strategy
+- [x] Implement Random strategy
+- [x] Implement GrimTrigger strategy
+- [x] Add tests for each strategy implementation
+- [x] Update strategy registry with new implementations
 
 ## 2. Game Flow Control
 ### Backend
