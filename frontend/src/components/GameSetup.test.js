@@ -80,8 +80,11 @@ describe('GameSetup', () => {
       fireEvent.click(screen.getByText('Run Game'));
     });
   
-    expect(mockOnStartGame).toHaveBeenCalledWith('tit_for_tat', 'always_cooperate', 5);
-  });
+    expect(mockOnStartGame).toHaveBeenCalledWith({
+      player1Strategy: 'tit_for_tat',
+      player2Strategy: 'always_cooperate', 
+      rounds: 5
+    });  });
 
   test('shows error when trying to start without selecting both strategies', async () => {
     await act(async () => {

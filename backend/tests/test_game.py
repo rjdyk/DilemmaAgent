@@ -61,3 +61,37 @@ def test_game_over():
     # Should not be able to play another round
     with pytest.raises(ValueError):
         game.process_round()
+
+def test_run_all_rounds():
+    """Test running all rounds automatically"""
+    player1_strategy = AlwaysCooperate()
+    player2_strategy = AlwaysCooperate()
+    game = Game(player1_strategy, player2_strategy)
+    
+    results = game.run_all_rounds()
+    
+    assert len(results) == game.max_rounds
+    assert game.is_game_over()
+    assert game.current_round == game.max_rounds
+    assert game.player1_total_score == 30  # 10 rounds * 3 points per round
+    assert game.player2_total_score == 30
+    
+    # Should not be able to run again
+    with pytest.raises(ValueError):
+        game.run_all_rounds()
+
+def test_run_all_rounds_partial():
+    """Test running remaining rounds after some manual rounds"""
+    player1_strategy = AlwaysCooperate()
+    player2_strategy = AlwaysCooperate()
+    game = Game(player1_strategy, player2_strategy)
+    
+    # Play 3 rounds manually
+    for _ in range(3):
+        game.process_round()
+        
+    results = game.run_all_rounds()
+    
+    assert len(results) == 7  # Should complete remaining 7 rounds
+    assert game.is_game_over()
+    assert game.current_round == game.max_rounds

@@ -52,6 +52,8 @@ def create_game():
         data = request.get_json()
         if 'player1Strategy' not in data or 'player2Strategy' not in data:
             return jsonify({"error": "Both player strategies must be specified"}), 400
+
+        print("Creating new game with data:", data)
             
         # Create strategy instances
         strategy1_type = StrategyType(data['player1Strategy'])
@@ -61,7 +63,9 @@ def create_game():
         
         # Create and store new game
         game_id, game = game_storage.create_game(strategy1, strategy2)
-        
+
+        print(f"Created game {game_id}, stored in game_storage:", game_storage.active_games)
+ 
         return jsonify({
             "game_id": game_id,
             "status": "created",
@@ -129,6 +133,44 @@ def make_move(game_id: str):
         return jsonify({"error": str(e)}), 400
     except Exception as e:
         return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
+    
+@bp.route('/game/<game_id>/complete', methods=['POST'])
+def complete_game(game_id: str):
+    """Auto-complete all remaining rounds in the game"""
+
+    print(f"Completing game {game_id}, current storage:", game_storage.active_games)
+
+    game = game_storage.get_game(game_id)
+    if not game:
+        return jsonify({"error": "Game not found"}), 404
+        
+    try:
+        # Run all remaining rounds
+        round_results = game.run_all_rounds()
+        
+        # Save completed game to history and remove from active storage
+        game_history.save_game(game_id, game)
+        game_storage.remove_game(game_id)
+        
+        return jsonify({
+            "rounds": [
+                {
+                    "round_number": r.round_number,
+                    "player1_move": r.player1_move.value,
+                    "player2_move": r.player2_move.value,
+                    "player1_score": r.player1_score,
+                    "player2_score": r.player2_score
+                }
+                for r in round_results
+            ],
+            "final_scores": {
+                "player1": game.player1_total_score,
+                "player2": game.player2_total_score  
+            }
+        })
+        
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
 
 @bp.route('/game/<game_id>/history', methods=['GET'])
 def get_game_history(game_id: str):

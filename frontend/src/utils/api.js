@@ -43,6 +43,16 @@ export const makeMove = async (gameId, move, reasoning) => {
   return response.data;
 };
 
+export const completeGame = async (gameId) => {
+  console.log(`Completing game ${gameId}`)
+  try {
+    const response = await api.post(`/game/${gameId}/complete`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data?.error || 'Failed to complete game';
+  }
+};
+
 export const getGameHistory = async (gameId) => {
   const response = await api.get(`/game/${gameId}/history`);
   return response.data;

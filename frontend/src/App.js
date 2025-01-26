@@ -1,6 +1,7 @@
-// src/App.jsx
+// src/App.js
 import React, { useState } from 'react';
 import GameSetup from './components/GameSetup';
+import GameBoard from './components/GameBoard';
 import { createGame, getGameState } from './utils/api';
 
 function App() {
@@ -11,7 +12,6 @@ function App() {
   const handleStartGame = async (params) => {
     try {
       setError(null);
-      console.log(params)
       const response = await createGame(params);
       setGameId(response.game_id);
       setGameState(response);
@@ -20,32 +20,32 @@ function App() {
     }
   };
 
-  const checkGameState = async () => {
-    if (!gameId) return;
-    
-    try {
-      const response = await getGameState(gameId);
-      setGameState(response);
-    } catch (err) {
-      setError(err.response?.data?.error || 'Failed to fetch game state');
-    }
+  const handleGameComplete = (result) => {
+    setGameState({
+      ...gameState,
+      ...result,
+      is_game_over: true
+    });
   };
 
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Prisoner's Dilemma Simulator</h1>
+      
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
           {error}
         </div>
       )}
+
       {!gameId ? (
         <GameSetup onStartGame={handleStartGame} />
       ) : (
-        <div>
-          <p>Game in progress - ID: {gameId}</p>
-          <p>Current round: {gameState?.current_round} / {gameState?.max_rounds}</p>
-        </div>
+        <GameBoard 
+          gameId={gameId}
+          gameState={gameState}
+          onGameComplete={handleGameComplete}
+        />
       )}
     </div>
   );

@@ -87,6 +87,27 @@ class Game:
             self.game_over = True
             
         return round_result
+    
+    def run_all_rounds(self) -> List[RoundResult]:
+        """
+        Process all remaining rounds until game completion
+        
+        Returns:
+            List[RoundResult]: Results of all processed rounds
+            
+        Raises:
+            ValueError: If game is already over
+        """
+        if self.is_game_over():
+            raise ValueError("Game is already complete")
+            
+        results = []
+        while not self.is_game_over():
+            result = self.process_round()
+            if result:
+                results.append(result)
+                
+        return results
 
     def calculate_scores(self, player1_move: Move, player2_move: Move) -> tuple[int, int]:
         """Calculate scores for both players based on their moves"""

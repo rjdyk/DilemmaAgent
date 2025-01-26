@@ -12,8 +12,8 @@
 
 ## 2. Game Flow Control
 ### Backend
-- [ ] Add gameMode (AUTO/MANUAL) to Game class
-- [ ] Add runAllRounds() method for AUTO mode
+- [x] Add gameMode (AUTO/MANUAL) to Game class
+- [x] Add runAllRounds() method for AUTO mode
 - [ ] Add gameStatus field (ACTIVE/COMPLETE/ERROR)
 - [ ] Add error message tracking
 - [ ] Update game state validation
