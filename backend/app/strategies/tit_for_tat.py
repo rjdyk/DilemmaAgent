@@ -9,4 +9,11 @@ class TitForTat(BaseStrategy):
     def get_move(self, current_round: int) -> Move:
         if not self.history:
             return Move.COOPERATE
-        return self.history[-1].player2_move
+            
+        # If we're player 1, look at player2's last move
+        # If we're player 2, look at player1's last move
+        last_opponent_move = (
+            self.history[-1].player2_move if self.is_player1 
+            else self.history[-1].player1_move
+        )
+        return last_opponent_move

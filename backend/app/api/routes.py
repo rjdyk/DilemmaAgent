@@ -74,7 +74,11 @@ def create_game():
             "current_round": 0,
             "max_rounds": game.max_rounds,
             "player1_strategy": strategy1_type.value,
-            "player2_strategy": strategy2_type.value
+            "player2_strategy": strategy2_type.value,
+            "strategy_names": {
+                "player1": strategy1.name,
+                "player2": strategy2.name
+            }
         })
         
     except ValueError as e:

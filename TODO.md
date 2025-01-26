@@ -22,7 +22,7 @@
 ### Frontend
 #### GameSetup Component
 - [x] Add strategy selection dropdowns
-- [ ] Add game mode toggle
+- [x] Add game mode toggle
 - [x] Add start game validation
 - [ ] Add loading states
 

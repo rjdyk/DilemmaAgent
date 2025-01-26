@@ -7,8 +7,8 @@ function GameBoard({ gameId, gameState, onGameComplete }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const scores = gameState?.is_game_over ? 
-    (gameState?.final_scores || gameState?.scores) : 
+  const scores = gameState?.is_game_over ?
+    (gameState?.final_scores || gameState?.scores) :
     (gameState?.scores || { player1: 0, player2: 0 });
   const currentRound = gameState?.current_round || 0;
   const maxRounds = gameState?.max_rounds || 0;
@@ -52,21 +52,27 @@ function GameBoard({ gameId, gameState, onGameComplete }) {
     <div className="game-board">
       <div className={`status-panel ${isGameOver ? 'game-over' : ''}`}>
         <h2>{isGameOver ? 'Game Complete' : 'Game in Progress'}</h2>
-        
+
         <div className="score-grid">
           <div className="score-box">
             <div className="score-label">Player 1</div>
             <div className="score-value">{scores.player1}</div>
+            <div className="strategy-name">
+              {gameState?.strategy_names?.player1 || 'Unknown Strategy'}
+            </div>
           </div>
-          
+
           <div className="score-box">
             <div className="score-label">Round</div>
             <div className="score-value">{currentRound} / {maxRounds}</div>
           </div>
-          
+
           <div className="score-box">
             <div className="score-label">Player 2</div>
             <div className="score-value">{scores.player2}</div>
+            <div className="strategy-name">
+              {gameState?.strategy_names?.player2 || 'Unknown Strategy'}
+            </div>
           </div>
         </div>
       </div>
@@ -83,19 +89,42 @@ function GameBoard({ gameId, gameState, onGameComplete }) {
             </tr>
           </thead>
           <tbody>
-            {rounds.map((round) => (
-              <tr key={round.round_number}>
-                <td>{round.round_number}</td>
-                <td className={`move-${round.player1_move}`}>
-                  {round.player1_move}
-                </td>
-                <td className={`move-${round.player2_move}`}>
-                  {round.player2_move}
-                </td>
-                <td>{round.player1_score}</td>
-                <td>{round.player2_score}</td>
-              </tr>
-            ))}
+            {rounds.map((round, index) => {
+              // Calculate cumulative scores up to this round
+              const p1Cumulative = rounds
+                .slice(0, index + 1)
+                .reduce((sum, r) => sum + r.player1_score, 0);
+              const p2Cumulative = rounds
+                .slice(0, index + 1)
+                .reduce((sum, r) => sum + r.player2_score, 0);
+
+              return (
+                <tr key={round.round_number}>
+                  <td>{round.round_number}</td>
+                  <td className={`move-${round.player1_move}`}>
+                    {round.player1_move}
+                  </td>
+                  <td className={`move-${round.player2_move}`}>
+                    {round.player2_move}
+                  </td>
+                  <td>
+                    +{round.player1_score} ({p1Cumulative})
+                  </td>
+                  <td>
+                    +{round.player2_score} ({p2Cumulative})
+                  </td>
+                </tr>
+              );
+            })}
+            <tr className="totals-row">
+              <td colSpan="3">Totals</td>
+              <td>
+                {rounds.reduce((sum, round) => sum + round.player1_score, 0)}
+              </td>
+              <td>
+                {rounds.reduce((sum, round) => sum + round.player2_score, 0)}
+              </td>
+            </tr>
           </tbody>
         </table>
       )}
@@ -109,7 +138,7 @@ function GameBoard({ gameId, gameState, onGameComplete }) {
           >
             {loading ? 'Processing...' : 'Next Round'}
           </button>
-          
+
           <button
             onClick={handleAutoComplete}
             disabled={loading}

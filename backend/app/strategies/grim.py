@@ -11,7 +11,13 @@ class GrimTrigger(BaseStrategy):
         if not self.history:
             return Move.COOPERATE
             
-        if not self.triggered and self.history[-1].player2_move == Move.DEFECT:
+        # Get opponent's last move based on which player we are
+        opponent_last_move = (
+            self.history[-1].player2_move if self.is_player1 
+            else self.history[-1].player1_move
+        )
+            
+        if not self.triggered and opponent_last_move == Move.DEFECT:
             self.triggered = True
             
         return Move.DEFECT if self.triggered else Move.COOPERATE
