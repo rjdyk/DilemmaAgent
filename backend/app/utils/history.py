@@ -24,11 +24,17 @@ class GameHistory:
             "final_scores": {
                 "player1": game.player1_total_score,
                 "player2": game.player2_total_score
+            },
+            "payoff_matrix": {
+                "cooperate_cooperate": game.payoff_matrix.cooperate_cooperate,
+                "cooperate_defect": game.payoff_matrix.cooperate_defect,
+                "defect_cooperate": game.payoff_matrix.defect_cooperate,
+                "defect_defect": game.payoff_matrix.defect_defect
             }
         }
         history["completed_games"].append(game_data)
         self._write_history(history)
-
+        
     def get_game(self, game_id: str):
         """
         Retrieve a game from history by its ID

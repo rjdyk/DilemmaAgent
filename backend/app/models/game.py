@@ -1,10 +1,10 @@
 from typing import List, Dict, Optional, Tuple
 from datetime import datetime
-from app.models.types import Move, RoundResult
+from app.models.types import Move, RoundResult, PayoffMatrix
 from app.strategies.base import BaseStrategy
 
 class Game:
-    def __init__(self, player1_strategy: BaseStrategy, player2_strategy: BaseStrategy, max_rounds: int = 10,):
+    def __init__(self, player1_strategy: BaseStrategy, player2_strategy: BaseStrategy, max_rounds: int = 10, payoff_matrix: Optional[PayoffMatrix] = None):
         """Initialize a new game with two strategies"""
         self.player1_strategy = player1_strategy
         self.player2_strategy = player2_strategy
@@ -16,13 +16,20 @@ class Game:
         self.player2_total_score = 0
         self.timestamp = datetime.now()
         
-        # Standard prisoner's dilemma payoff matrix
-        # (player1_payoff, player2_payoff)
-        self.payoff_matrix = {
-            (Move.COOPERATE, Move.COOPERATE): (3, 3),
-            (Move.COOPERATE, Move.DEFECT): (0, 5),
-            (Move.DEFECT, Move.COOPERATE): (5, 0),
-            (Move.DEFECT, Move.DEFECT): (1, 1)
+        # Use provided matrix or default
+        default_matrix = PayoffMatrix(
+            cooperate_cooperate=(3, 3),
+            cooperate_defect=(0, 5),
+            defect_cooperate=(5, 0),
+            defect_defect=(1, 1)
+        )
+        self.payoff_matrix = payoff_matrix or default_matrix
+
+        self.payoff_dict = {
+            (Move.COOPERATE, Move.COOPERATE): self.payoff_matrix.cooperate_cooperate,
+            (Move.COOPERATE, Move.DEFECT): self.payoff_matrix.cooperate_defect,
+            (Move.DEFECT, Move.COOPERATE): self.payoff_matrix.defect_cooperate,
+            (Move.DEFECT, Move.DEFECT): self.payoff_matrix.defect_defect
         }
 
     def is_valid_move(self, move: str) -> bool:
@@ -112,7 +119,7 @@ class Game:
     def calculate_scores(self, player1_move: Move, player2_move: Move) -> tuple[int, int]:
         """Calculate scores for both players based on their moves"""
         try:
-            return self.payoff_matrix[(player1_move, player2_move)]
+            return self.payoff_dict[(player1_move, player2_move)]
         except KeyError as e:
             raise KeyError(f"Invalid move combination: {player1_move}, {player2_move}") from e
 

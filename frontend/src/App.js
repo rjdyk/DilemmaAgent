@@ -49,6 +49,12 @@ function App() {
     }
   };
 
+  const resetGame = () => {
+    setGameId(null);
+    setGameState(null);
+    setError(null);
+  };
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Prisoner's Dilemma Simulator</h1>
@@ -66,6 +72,7 @@ function App() {
           gameId={gameId}
           gameState={gameState}
           onGameComplete={handleGameUpdate}
+          onNewGame={resetGame}
         />
       )}
     </div>

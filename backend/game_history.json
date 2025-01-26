@@ -977,6 +977,156 @@
         "player1": 12,
         "player2": 17
       }
+    },
+    {
+      "game_id": "22cc22d8-9b18-4990-b494-f93d0bbfd6c1",
+      "timestamp": "2025-01-26T16:20:41.868340",
+      "player1_strategy": "AlwaysDefect",
+      "player2_strategy": "TitForTat",
+      "rounds": [
+        {
+          "round_number": 1,
+          "player1_move": "defect",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Always Defect",
+          "player2_reasoning": "Tit for Tat",
+          "player1_score": 5,
+          "player2_score": 0
+        },
+        {
+          "round_number": 2,
+          "player1_move": "defect",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Always Defect",
+          "player2_reasoning": "Tit for Tat",
+          "player1_score": 5,
+          "player2_score": 0
+        },
+        {
+          "round_number": 3,
+          "player1_move": "defect",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Always Defect",
+          "player2_reasoning": "Tit for Tat",
+          "player1_score": 5,
+          "player2_score": 0
+        },
+        {
+          "round_number": 4,
+          "player1_move": "defect",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Always Defect",
+          "player2_reasoning": "Tit for Tat",
+          "player1_score": 5,
+          "player2_score": 0
+        },
+        {
+          "round_number": 5,
+          "player1_move": "defect",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Always Defect",
+          "player2_reasoning": "Tit for Tat",
+          "player1_score": 5,
+          "player2_score": 0
+        }
+      ],
+      "final_scores": {
+        "player1": 25,
+        "player2": 0
+      },
+      "payoff_matrix": {
+        "cooperate_cooperate": [
+          3,
+          3
+        ],
+        "cooperate_defect": [
+          0,
+          5
+        ],
+        "defect_cooperate": [
+          5,
+          0
+        ],
+        "defect_defect": [
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "game_id": "9d668788-5f5e-48e2-beed-fc9feaeca901",
+      "timestamp": "2025-01-26T16:20:53.424994",
+      "player1_strategy": "RandomStrategy",
+      "player2_strategy": "TitForTat",
+      "rounds": [
+        {
+          "round_number": 1,
+          "player1_move": "cooperate",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Random",
+          "player2_reasoning": "Tit for Tat",
+          "player1_score": 3,
+          "player2_score": 3
+        },
+        {
+          "round_number": 2,
+          "player1_move": "cooperate",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Random",
+          "player2_reasoning": "Tit for Tat",
+          "player1_score": 3,
+          "player2_score": 3
+        },
+        {
+          "round_number": 3,
+          "player1_move": "defect",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Random",
+          "player2_reasoning": "Tit for Tat",
+          "player1_score": 5,
+          "player2_score": 0
+        },
+        {
+          "round_number": 4,
+          "player1_move": "cooperate",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Random",
+          "player2_reasoning": "Tit for Tat",
+          "player1_score": 3,
+          "player2_score": 3
+        },
+        {
+          "round_number": 5,
+          "player1_move": "cooperate",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Random",
+          "player2_reasoning": "Tit for Tat",
+          "player1_score": 3,
+          "player2_score": 3
+        }
+      ],
+      "final_scores": {
+        "player1": 17,
+        "player2": 12
+      },
+      "payoff_matrix": {
+        "cooperate_cooperate": [
+          3,
+          3
+        ],
+        "cooperate_defect": [
+          0,
+          5
+        ],
+        "defect_cooperate": [
+          5,
+          0
+        ],
+        "defect_defect": [
+          1,
+          1
+        ]
+      }
     }
   ]
 }

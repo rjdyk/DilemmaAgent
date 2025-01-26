@@ -198,6 +198,14 @@ def get_game_history(game_id: str):
             for r in game.rounds
         ]
         
+        # Add payoff matrix to response
+        matrix = {
+            "cooperate_cooperate": game.payoff_matrix.cooperate_cooperate,
+            "cooperate_defect": game.payoff_matrix.cooperate_defect,
+            "defect_cooperate": game.payoff_matrix.defect_cooperate,
+            "defect_defect": game.payoff_matrix.defect_defect
+        }
+        
         return jsonify({
             "game_id": game_id,
             "is_active": True,
@@ -205,7 +213,8 @@ def get_game_history(game_id: str):
             "scores": {
                 "player1": game.player1_total_score,
                 "player2": game.player2_total_score
-            }
+            },
+            "payoff_matrix": matrix
         })
     
     # If not in active games, check history

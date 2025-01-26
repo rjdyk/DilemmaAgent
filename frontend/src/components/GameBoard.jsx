@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { completeGame, makeMove } from '../utils/api';
 import './GameBoard.css';
 
-function GameBoard({ gameId, gameState, onGameComplete }) {
+function GameBoard({ gameId, gameState, onGameComplete, onNewGame }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -46,6 +46,14 @@ function GameBoard({ gameId, gameState, onGameComplete }) {
     if (scores.player1 > scores.player2) return 'Player 1 Wins!';
     if (scores.player2 > scores.player1) return 'Player 2 Wins!';
     return 'Game Tied!';
+  };
+
+  const calculateCooperationRate = (rounds, playerNum) => {
+    if (!rounds.length) return "0%";
+    const cooperateMoves = rounds.filter(
+      round => (playerNum === 1 ? round.player1_move : round.player2_move) === "cooperate"
+    ).length;
+    return `${Math.round((cooperateMoves / rounds.length) * 100)}%`;
   };
 
   return (
@@ -117,7 +125,9 @@ function GameBoard({ gameId, gameState, onGameComplete }) {
               );
             })}
             <tr className="totals-row">
-              <td colSpan="3">Totals</td>
+              <td>Totals</td>
+              <td>{calculateCooperationRate(rounds, 1)}</td>
+              <td>{calculateCooperationRate(rounds, 2)}</td>
               <td>
                 {rounds.reduce((sum, round) => sum + round.player1_score, 0)}
               </td>
@@ -148,6 +158,18 @@ function GameBoard({ gameId, gameState, onGameComplete }) {
           </button>
         </div>
       )}
+      {isGameOver && (
+        <div className="button-group">
+          <button
+            onClick={onNewGame}  // Change from window.location.reload()
+            className="new-game-button"
+          >
+            New Game
+          </button>
+        </div>
+      )}
+
+
 
       {error && <div className="error-message">{error}</div>}
     </div>

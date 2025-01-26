@@ -14,3 +14,10 @@ class RoundResult:
     player2_reasoning: str
     player1_score: int
     player2_score: int
+
+@dataclass
+class PayoffMatrix:
+    cooperate_cooperate: tuple[int, int]  # (player1, player2)
+    cooperate_defect: tuple[int, int]
+    defect_cooperate: tuple[int, int]
+    defect_defect: tuple[int, int]
