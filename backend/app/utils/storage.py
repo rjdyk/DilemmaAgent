@@ -8,7 +8,7 @@ class GameStorage:
     def __init__(self):
         self.active_games: Dict[str, Game] = {}
     
-    def create_game(self, player1_strategy: BaseStrategy, player2_strategy: BaseStrategy) -> Tuple[str, Game]:
+    def create_game(self, player1_strategy: BaseStrategy, player2_strategy: BaseStrategy, max_rounds: int = 10) -> Tuple[str, Game]:
         """
         Create a new game with two players
         
@@ -20,7 +20,7 @@ class GameStorage:
             Tuple of (game_id, game)
         """
         game_id = str(uuid4())
-        game = Game(player1_strategy, player2_strategy)  # Game class will need updating too
+        game = Game(player1_strategy, player2_strategy, max_rounds=max_rounds)  # Game class will need updating too
         self.active_games[game_id] = game
         return game_id, game
     

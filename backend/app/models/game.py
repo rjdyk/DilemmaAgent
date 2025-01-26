@@ -4,12 +4,12 @@ from app.models.types import Move, RoundResult
 from app.strategies.base import BaseStrategy
 
 class Game:
-    def __init__(self, player1_strategy: BaseStrategy, player2_strategy: BaseStrategy):
+    def __init__(self, player1_strategy: BaseStrategy, player2_strategy: BaseStrategy, max_rounds: int = 10,):
         """Initialize a new game with two strategies"""
         self.player1_strategy = player1_strategy
         self.player2_strategy = player2_strategy
         self.current_round = 0
-        self.max_rounds = 10
+        self.max_rounds = max_rounds        
         self.game_over = False
         self.rounds: List[RoundResult] = []
         self.player1_total_score = 0

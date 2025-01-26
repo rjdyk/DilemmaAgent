@@ -1,6 +1,6 @@
 // src/components/GameBoard.jsx
 import React, { useState } from 'react';
-import { completeGame } from '../utils/api';
+import { completeGame, makeMove } from '../utils/api';
 import './GameBoard.css';
 
 function GameBoard({ gameId, gameState, onGameComplete }) {
@@ -9,9 +9,24 @@ function GameBoard({ gameId, gameState, onGameComplete }) {
 
   const scores = gameState?.is_game_over ? 
     (gameState?.final_scores || gameState?.scores) : 
-    (gameState?.scores || { player1: 0, player2: 0 });  const currentRound = gameState?.current_round || 0;
+    (gameState?.scores || { player1: 0, player2: 0 });
+  const currentRound = gameState?.current_round || 0;
   const maxRounds = gameState?.max_rounds || 0;
   const isGameOver = gameState?.is_game_over;
+  const rounds = gameState?.rounds || [];
+
+  const handleNextRound = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const result = await makeMove(gameId);
+      onGameComplete(result);
+    } catch (err) {
+      setError(err.message || 'Failed to process round');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAutoComplete = async () => {
     try {
@@ -54,45 +69,55 @@ function GameBoard({ gameId, gameState, onGameComplete }) {
             <div className="score-value">{scores.player2}</div>
           </div>
         </div>
-
-        {isGameOver && <div className="winner-text">{getWinner()}</div>}
       </div>
 
-      <table className="game-table">
-        <thead>
-          <tr>
-            <th>Round</th>
-            <th>Player 1</th>
-            <th>Player 2</th>
-            <th>P1 Score</th>
-            <th>P2 Score</th>
-          </tr>
-        </thead>
-        <tbody>
-          {gameState.rounds?.map((round) => (
-            <tr key={round.round_number}>
-              <td>{round.round_number}</td>
-              <td className={`move-${round.player1_move}`}>
-                {round.player1_move}
-              </td>
-              <td className={`move-${round.player2_move}`}>
-                {round.player2_move}
-              </td>
-              <td>{round.player1_score}</td>
-              <td>{round.player2_score}</td>
+      {rounds.length > 0 && (
+        <table className="game-table">
+          <thead>
+            <tr>
+              <th>Round</th>
+              <th>Player 1</th>
+              <th>Player 2</th>
+              <th>P1 Score</th>
+              <th>P2 Score</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {rounds.map((round) => (
+              <tr key={round.round_number}>
+                <td>{round.round_number}</td>
+                <td className={`move-${round.player1_move}`}>
+                  {round.player1_move}
+                </td>
+                <td className={`move-${round.player2_move}`}>
+                  {round.player2_move}
+                </td>
+                <td>{round.player1_score}</td>
+                <td>{round.player2_score}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
 
       {!isGameOver && (
-        <button
-          onClick={handleAutoComplete}
-          disabled={loading}
-          className="complete-button"
-        >
-          {loading ? 'Completing...' : 'Auto-Complete Game'}
-        </button>
+        <div className="button-group">
+          <button
+            onClick={handleNextRound}
+            disabled={loading}
+            className="next-round-button"
+          >
+            {loading ? 'Processing...' : 'Next Round'}
+          </button>
+          
+          <button
+            onClick={handleAutoComplete}
+            disabled={loading}
+            className="complete-button"
+          >
+            {loading ? 'Completing...' : 'Auto-Complete Game'}
+          </button>
+        </div>
       )}
 
       {error && <div className="error-message">{error}</div>}

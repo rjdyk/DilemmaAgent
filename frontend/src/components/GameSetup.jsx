@@ -62,6 +62,7 @@ function GameSetup({ onStartGame }) {
       setError('Please select strategies for both players');
       return;
     }
+    console.log('Starting game with rounds:', rounds); // Add this debug log
     onStartGame({player1Strategy, player2Strategy, rounds});
   };
 

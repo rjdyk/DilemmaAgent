@@ -21,22 +21,22 @@
 
 ### Frontend
 #### GameSetup Component
-- [ ] Add strategy selection dropdowns
+- [x] Add strategy selection dropdowns
 - [ ] Add game mode toggle
-- [ ] Add start game validation
+- [x] Add start game validation
 - [ ] Add loading states
 
 #### GameBoard Component
-- [ ] Create round history table
-- [ ] Add current scores display
-- [ ] Add "Next Round" button for manual mode
-- [ ] Add "Auto-Complete" button
+- [x] Create round history table
+- [x] Add current scores display
+- [x] Add "Next Round" button for manual mode
+- [x] Add "Auto-Complete" button
 - [ ] Implement loading states
 - [ ] Add error message display
 
 #### Results Component
-- [ ] Display final scores
-- [ ] Show complete round history
+- [x] Display final scores
+- [x] Show complete round history
 - [ ] Calculate and display statistics
   - [ ] Cooperation rates
   - [ ] Average scores

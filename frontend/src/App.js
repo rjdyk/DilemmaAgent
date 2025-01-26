@@ -20,14 +20,33 @@ function App() {
     }
   };
 
-  const handleGameComplete = (result) => {
-    setGameState({
-      ...gameState,
-      rounds: result.rounds,
-      scores: result.final_scores, // Update to use final_scores
-      current_round: gameState.max_rounds, // Set current round to max rounds
-      is_game_over: true
-    });
+  const handleGameUpdate = async (newState) => {
+    // Check if this is a game completion update
+    if (newState.final_scores) {
+      // Handle game completion
+      setGameState({
+        ...gameState,
+        rounds: newState.rounds,
+        scores: newState.final_scores,
+        current_round: gameState.max_rounds,
+        is_game_over: true
+      });
+    } else {
+      // Handle regular round update
+      setGameState(prevState => ({
+        ...prevState,
+        rounds: [...(prevState?.rounds || []), {
+          round_number: newState.round_number,
+          player1_move: newState.player1_move,
+          player2_move: newState.player2_move,
+          player1_score: newState.player1_score,
+          player2_score: newState.player2_score
+        }],
+        scores: newState.scores,
+        current_round: newState.round_number,
+        is_game_over: newState.game_over
+      }));
+    }
   };
 
   return (
@@ -46,7 +65,7 @@ function App() {
         <GameBoard 
           gameId={gameId}
           gameState={gameState}
-          onGameComplete={handleGameComplete}
+          onGameComplete={handleGameUpdate}
         />
       )}
     </div>

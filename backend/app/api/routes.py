@@ -52,9 +52,11 @@ def create_game():
         data = request.get_json()
         if 'player1Strategy' not in data or 'player2Strategy' not in data:
             return jsonify({"error": "Both player strategies must be specified"}), 400
-
-        print("Creating new game with data:", data)
-            
+        # Get rounds parameter with default of 10
+        rounds = int(data.get('rounds', 10))
+        if rounds < 1:
+            return jsonify({"error": "Rounds must be at least 1"}), 400
+        
         # Create strategy instances
         strategy1_type = StrategyType(data['player1Strategy'])
         strategy2_type = StrategyType(data['player2Strategy'])
@@ -62,7 +64,7 @@ def create_game():
         strategy2 = create_strategy(strategy2_type)
         
         # Create and store new game
-        game_id, game = game_storage.create_game(strategy1, strategy2)
+        game_id, game = game_storage.create_game(strategy1, strategy2, max_rounds=rounds)
 
         print(f"Created game {game_id}, stored in game_storage:", game_storage.active_games)
  
