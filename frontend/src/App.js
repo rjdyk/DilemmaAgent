@@ -23,7 +23,9 @@ function App() {
   const handleGameComplete = (result) => {
     setGameState({
       ...gameState,
-      ...result,
+      rounds: result.rounds,
+      scores: result.final_scores, // Update to use final_scores
+      current_round: gameState.max_rounds, // Set current round to max rounds
       is_game_over: true
     });
   };
