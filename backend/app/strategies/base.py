@@ -14,9 +14,10 @@ class StrategyType(Enum):
 class BaseStrategy:
     """Base class for all opponent strategies"""
     
-    def __init__(self, name: str):
+    def __init__(self, name: str, is_player1: bool):
         self.name = name
         self._history: List[RoundResult] = []
+        self.is_player1 = is_player1
         
     def get_move(self, current_round: int) -> Move:
         """
@@ -29,6 +30,15 @@ class BaseStrategy:
             Move: The strategy's chosen move (COOPERATE or DEFECT)
         """
         raise NotImplementedError("Strategies must implement get_move()")
+    
+    def get_opponent_last_move(self) -> Optional[Move]:
+        """Get the opponent's move from the last round"""
+        if not self.history:
+            return None
+        return (
+            self.history[-1].player2_move if self.is_player1
+            else self.history[-1].player1_move
+        )
         
     @property 
     def history(self) -> List[RoundResult]:

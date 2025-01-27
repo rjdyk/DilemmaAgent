@@ -49,12 +49,13 @@ def register_strategy(strategy_type: StrategyType, strategy_class: Type[BaseStra
     _strategy_registry[strategy_type] = strategy_class
 
 
-def create_strategy(strategy_type: StrategyType) -> BaseStrategy:
+def create_strategy(strategy_type: StrategyType, is_player1: bool) -> BaseStrategy:
     """
     Create a new instance of the specified strategy
     
     Args:
         strategy_type: The type of strategy to create
+        is_player1: Whether this strategy is for player 1 (True) or player 2 (False)
     
     Returns:
         BaseStrategy: A new instance of the requested strategy
@@ -66,8 +67,7 @@ def create_strategy(strategy_type: StrategyType) -> BaseStrategy:
         raise ValueError(f"Strategy {strategy_type.value} is not implemented yet")
     
     strategy_class = _strategy_registry[strategy_type]
-    return strategy_class()
-
+    return strategy_class(is_player1=is_player1)
 
 def get_available_strategies() -> list[StrategyType]:
     """

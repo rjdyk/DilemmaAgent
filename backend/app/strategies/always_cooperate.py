@@ -10,9 +10,8 @@ class AlwaysCooperate(BaseStrategy):
     but it's useful as a baseline strategy and for testing.
     """
     
-    def __init__(self):
-        """Initialize the Always Cooperate strategy"""
-        super().__init__(name="Always Cooperate")
+    def __init__(self, is_player1: bool):
+        super().__init__(name="Always Cooperate", is_player1=is_player1)
 
     def get_move(self, current_round: int) -> Move:
         """

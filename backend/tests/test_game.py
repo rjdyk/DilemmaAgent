@@ -5,8 +5,8 @@ from app.strategies.always_cooperate import AlwaysCooperate
 
 def test_game_initialization():
     """Test that a new game is properly initialized"""
-    player1_strategy = AlwaysCooperate()
-    player2_strategy = AlwaysCooperate()
+    player1_strategy = AlwaysCooperate(is_player1=True)
+    player2_strategy = AlwaysCooperate(is_player1=False)
     game = Game(player1_strategy, player2_strategy)
     
     assert game.current_round == 0
@@ -18,8 +18,8 @@ def test_game_initialization():
 
 def test_valid_move_processing():
     """Test that a valid move is properly processed"""
-    player1_strategy = AlwaysCooperate()  
-    player2_strategy = AlwaysCooperate()  
+    player1_strategy = AlwaysCooperate(is_player1=True)  
+    player2_strategy = AlwaysCooperate(is_player1=False)  
     game = Game(player1_strategy, player2_strategy)
     
     # Process one round - both should cooperate based on their strategies
@@ -36,8 +36,8 @@ def test_valid_move_processing():
 
 def test_player_moves():
     """Test that both players' strategies are correctly used"""
-    player1_strategy = AlwaysCooperate()
-    player2_strategy = AlwaysCooperate()
+    player1_strategy = AlwaysCooperate(is_player1=True)
+    player2_strategy = AlwaysCooperate(is_player1=False)
     game = Game(player1_strategy, player2_strategy)
     
     move1 = game.get_player1_move()
@@ -48,8 +48,8 @@ def test_player_moves():
 
 def test_game_over():
     """Test that game ends after max rounds"""
-    player1_strategy = AlwaysCooperate()
-    player2_strategy = AlwaysCooperate()
+    player1_strategy = AlwaysCooperate(is_player1=True)
+    player2_strategy = AlwaysCooperate(is_player1=False)
     game = Game(player1_strategy, player2_strategy)
     
     # Play max_rounds
@@ -64,8 +64,8 @@ def test_game_over():
 
 def test_run_all_rounds():
     """Test running all rounds automatically"""
-    player1_strategy = AlwaysCooperate()
-    player2_strategy = AlwaysCooperate()
+    player1_strategy = AlwaysCooperate(is_player1=True)
+    player2_strategy = AlwaysCooperate(is_player1=False)
     game = Game(player1_strategy, player2_strategy)
     
     results = game.run_all_rounds()
@@ -82,8 +82,8 @@ def test_run_all_rounds():
 
 def test_run_all_rounds_partial():
     """Test running remaining rounds after some manual rounds"""
-    player1_strategy = AlwaysCooperate()
-    player2_strategy = AlwaysCooperate()
+    player1_strategy = AlwaysCooperate(is_player1=True)
+    player2_strategy = AlwaysCooperate(is_player1=False)
     game = Game(player1_strategy, player2_strategy)
     
     # Play 3 rounds manually

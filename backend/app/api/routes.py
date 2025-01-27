@@ -60,8 +60,8 @@ def create_game():
         # Create strategy instances
         strategy1_type = StrategyType(data['player1Strategy'])
         strategy2_type = StrategyType(data['player2Strategy'])
-        strategy1 = create_strategy(strategy1_type)
-        strategy2 = create_strategy(strategy2_type)
+        strategy1 = create_strategy(strategy1_type, is_player1=True)
+        strategy2 = create_strategy(strategy2_type, is_player1=False)
         
         # Create and store new game
         game_id, game = game_storage.create_game(strategy1, strategy2, max_rounds=rounds)

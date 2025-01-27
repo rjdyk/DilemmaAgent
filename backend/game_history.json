@@ -1127,6 +1127,156 @@
           1
         ]
       }
+    },
+    {
+      "game_id": "023d62aa-22c1-4ec8-92c8-b0ef20b899b7",
+      "timestamp": "2025-01-27T13:52:32.604053",
+      "player1_strategy": "RandomStrategy",
+      "player2_strategy": "TitForTat",
+      "rounds": [
+        {
+          "round_number": 1,
+          "player1_move": "cooperate",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Random",
+          "player2_reasoning": "Tit for Tat",
+          "player1_score": 3,
+          "player2_score": 3
+        },
+        {
+          "round_number": 2,
+          "player1_move": "cooperate",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Random",
+          "player2_reasoning": "Tit for Tat",
+          "player1_score": 3,
+          "player2_score": 3
+        },
+        {
+          "round_number": 3,
+          "player1_move": "defect",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Random",
+          "player2_reasoning": "Tit for Tat",
+          "player1_score": 5,
+          "player2_score": 0
+        },
+        {
+          "round_number": 4,
+          "player1_move": "cooperate",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Random",
+          "player2_reasoning": "Tit for Tat",
+          "player1_score": 3,
+          "player2_score": 3
+        },
+        {
+          "round_number": 5,
+          "player1_move": "cooperate",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Random",
+          "player2_reasoning": "Tit for Tat",
+          "player1_score": 3,
+          "player2_score": 3
+        }
+      ],
+      "final_scores": {
+        "player1": 17,
+        "player2": 12
+      },
+      "payoff_matrix": {
+        "cooperate_cooperate": [
+          3,
+          3
+        ],
+        "cooperate_defect": [
+          0,
+          5
+        ],
+        "defect_cooperate": [
+          5,
+          0
+        ],
+        "defect_defect": [
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "game_id": "e64e935d-8ae0-4d12-95a5-cf20d3536542",
+      "timestamp": "2025-01-27T13:53:42.695281",
+      "player1_strategy": "RandomStrategy",
+      "player2_strategy": "GrimTrigger",
+      "rounds": [
+        {
+          "round_number": 1,
+          "player1_move": "cooperate",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Random",
+          "player2_reasoning": "Grim Trigger",
+          "player1_score": 3,
+          "player2_score": 3
+        },
+        {
+          "round_number": 2,
+          "player1_move": "cooperate",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Random",
+          "player2_reasoning": "Grim Trigger",
+          "player1_score": 3,
+          "player2_score": 3
+        },
+        {
+          "round_number": 3,
+          "player1_move": "defect",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Random",
+          "player2_reasoning": "Grim Trigger",
+          "player1_score": 5,
+          "player2_score": 0
+        },
+        {
+          "round_number": 4,
+          "player1_move": "cooperate",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Random",
+          "player2_reasoning": "Grim Trigger",
+          "player1_score": 3,
+          "player2_score": 3
+        },
+        {
+          "round_number": 5,
+          "player1_move": "cooperate",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Random",
+          "player2_reasoning": "Grim Trigger",
+          "player1_score": 3,
+          "player2_score": 3
+        }
+      ],
+      "final_scores": {
+        "player1": 17,
+        "player2": 12
+      },
+      "payoff_matrix": {
+        "cooperate_cooperate": [
+          3,
+          3
+        ],
+        "cooperate_defect": [
+          0,
+          5
+        ],
+        "defect_cooperate": [
+          5,
+          0
+        ],
+        "defect_defect": [
+          1,
+          1
+        ]
+      }
     }
   ]
 }

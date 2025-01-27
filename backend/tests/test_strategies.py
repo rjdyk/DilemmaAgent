@@ -5,92 +5,99 @@ from app.strategies.pavlov import Pavlov
 from app.strategies.random_strategy import RandomStrategy
 from app.strategies.grim import GrimTrigger
 
-def create_round_result(player1_move: Move, player2_move: Move) -> RoundResult:
+def create_round_result(round_num: int, p1_move: Move, p2_move: Move) -> RoundResult:
+    """Helper to create round results with proper scoring"""
+    scores = {
+        (Move.COOPERATE, Move.COOPERATE): (3, 3),
+        (Move.COOPERATE, Move.DEFECT): (0, 5),
+        (Move.DEFECT, Move.COOPERATE): (5, 0),
+        (Move.DEFECT, Move.DEFECT): (1, 1)
+    }
+    p1_score, p2_score = scores[(p1_move, p2_move)]
     return RoundResult(
-        round_number=1,
-        player1_move=player1_move,
-        player2_move=player2_move,
+        round_number=round_num,
+        player1_move=p1_move,
+        player2_move=p2_move,
+        player1_score=p1_score,
+        player2_score=p2_score,
         player1_reasoning="test",
-        player2_reasoning="test",
-        player1_score=3 if player1_move == Move.COOPERATE and player2_move == Move.COOPERATE else 5 if player1_move == Move.DEFECT and player2_move == Move.COOPERATE else 0 if player1_move == Move.COOPERATE and player2_move == Move.DEFECT else 1,
-        player2_score=3 if player1_move == Move.COOPERATE and player2_move == Move.COOPERATE else 0 if player1_move == Move.DEFECT and player2_move == Move.COOPERATE else 5 if player1_move == Move.COOPERATE and player2_move == Move.DEFECT else 1
+        player2_reasoning="test"
     )
 
 class TestTitForTat:
-    def test_first_move_cooperates(self):
-        strategy = TitForTat()
+    def test_initial_move(self):
+        strategy = TitForTat(is_player1=True)
         assert strategy.get_move(0) == Move.COOPERATE
 
-    def test_copies_opponent_last_move(self):
-        strategy = TitForTat()
-        strategy.add_round(create_round_result(Move.COOPERATE, Move.DEFECT))
+    def test_copies_opponent_move_as_player1(self):
+        strategy = TitForTat(is_player1=True)
+        strategy.add_round(create_round_result(1, Move.COOPERATE, Move.DEFECT))
         assert strategy.get_move(1) == Move.DEFECT
-        
-    def test_reset_clears_history(self):
-        strategy = TitForTat()
-        strategy.add_round(create_round_result(Move.COOPERATE, Move.DEFECT))
-        strategy.reset()
-        assert strategy.get_move(0) == Move.COOPERATE
+
+    def test_copies_opponent_move_as_player2(self):
+        strategy = TitForTat(is_player1=False)
+        strategy.add_round(create_round_result(1, Move.DEFECT, Move.COOPERATE))
+        assert strategy.get_move(1) == Move.DEFECT
 
 class TestPavlov:
-    def test_first_move_cooperates(self):
-        strategy = Pavlov()
+    def test_initial_move(self):
+        strategy = Pavlov(is_player1=True)
         assert strategy.get_move(0) == Move.COOPERATE
 
-    def test_stays_after_mutual_cooperation(self):
-        strategy = Pavlov()
-        strategy.add_round(create_round_result(Move.COOPERATE, Move.COOPERATE))
-        assert strategy.get_move(1) == Move.COOPERATE
+    @pytest.mark.parametrize("is_player1,opponent_move,expected", [
+        # Win scenarios (stay with previous move COOPERATE)
+        (True, Move.COOPERATE, Move.COOPERATE),   # I cooperated (3,3)
+        (False, Move.COOPERATE, Move.COOPERATE),  # I cooperated (3,3)
 
-    def test_switches_after_being_betrayed(self):
-        strategy = Pavlov()
-        strategy.add_round(create_round_result(Move.COOPERATE, Move.DEFECT))
-        assert strategy.get_move(1) == Move.DEFECT
-
-    def test_switches_after_defecting_against_cooperation(self):
-        strategy = Pavlov()
-        strategy.add_round(create_round_result(Move.DEFECT, Move.COOPERATE))
-        assert strategy.get_move(1) == Move.DEFECT
+        # Loss scenarios (switch from COOPERATE to DEFECT)
+        (True, Move.DEFECT, Move.DEFECT),    # I cooperated and got exploited (0,5)
+        (False, Move.DEFECT, Move.DEFECT),   # I cooperated and got exploited (0,5)
+        ])
+    def test_win_stay_lose_shift(self, is_player1: bool, opponent_move: Move, expected: Move):
+        strategy = Pavlov(is_player1=is_player1)
+        # Create a round where I cooperated and opponent did their move
+        if is_player1:
+            round_result = create_round_result(1, Move.COOPERATE, opponent_move)
+        else:
+            round_result = create_round_result(1, opponent_move, Move.COOPERATE)
+        strategy.add_round(round_result)
+        assert strategy.get_move(1) == expected
 
 class TestRandomStrategy:
     def test_consistent_with_same_seed(self):
-        strategy1 = RandomStrategy(seed=42)
-        strategy2 = RandomStrategy(seed=42)
+        strategy1 = RandomStrategy(is_player1=True, seed=42)
+        strategy2 = RandomStrategy(is_player1=False, seed=42)
         assert strategy1.get_move(0) == strategy2.get_move(0)
 
     def test_different_with_different_seeds(self):
-        strategy1 = RandomStrategy(seed=42)
-        strategy2 = RandomStrategy(seed=43)
+        strategy1 = RandomStrategy(is_player1=True, seed=42)
+        strategy2 = RandomStrategy(is_player1=False, seed=43)
         # Run multiple times to avoid rare false negatives
         moves1 = [strategy1.get_move(i) for i in range(10)]
         moves2 = [strategy2.get_move(i) for i in range(10)]
         assert moves1 != moves2
 
     def test_returns_valid_moves(self):
-        strategy = RandomStrategy()
+        strategy = RandomStrategy(is_player1=True)
         for _ in range(10):
             move = strategy.get_move(0)
             assert move in [Move.COOPERATE, Move.DEFECT]
 
 class TestGrimTrigger:
-    def test_first_move_cooperates(self):
-        strategy = GrimTrigger()
+    def test_initial_move(self):
+        strategy = GrimTrigger(is_player1=True)
         assert strategy.get_move(0) == Move.COOPERATE
 
-    def test_continues_cooperation_until_betrayed(self):
-        strategy = GrimTrigger()
-        strategy.add_round(create_round_result(Move.COOPERATE, Move.COOPERATE))
-        assert strategy.get_move(1) == Move.COOPERATE
-
-    def test_defects_forever_after_betrayal(self):
-        strategy = GrimTrigger()
-        strategy.add_round(create_round_result(Move.COOPERATE, Move.DEFECT))
+    def test_defects_forever_after_opponent_defects_as_player1(self):
+        strategy = GrimTrigger(is_player1=True)
+        strategy.add_round(create_round_result(1, Move.COOPERATE, Move.DEFECT))
         assert strategy.get_move(1) == Move.DEFECT
-        strategy.add_round(create_round_result(Move.DEFECT, Move.COOPERATE))
+        strategy.add_round(create_round_result(2, Move.DEFECT, Move.COOPERATE))
         assert strategy.get_move(2) == Move.DEFECT
 
-    def test_reset_clears_triggered_state(self):
-        strategy = GrimTrigger()
-        strategy.add_round(create_round_result(Move.COOPERATE, Move.DEFECT))
-        strategy.reset()
-        assert strategy.get_move(0) == Move.COOPERATE
+    def test_defects_forever_after_opponent_defects_as_player2(self):
+        strategy = GrimTrigger(is_player1=False)
+        strategy.add_round(create_round_result(1, Move.DEFECT, Move.COOPERATE))
+        assert strategy.get_move(1) == Move.DEFECT
+        strategy.add_round(create_round_result(2, Move.COOPERATE, Move.DEFECT))
+        assert strategy.get_move(2) == Move.DEFECT
