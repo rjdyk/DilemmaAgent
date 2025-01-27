@@ -37,11 +37,11 @@
 #### Results Component
 - [x] Display final scores
 - [x] Show complete round history
-- [ ] Calculate and display statistics
-  - [ ] Cooperation rates
-  - [ ] Average scores
-  - [ ] Win/loss status
-- [ ] Add "New Game" button
+- [x] Calculate and display statistics
+  - [x] Cooperation rates
+  - [x] Average scores
+  - [x] Win/loss status
+- [x] Add "New Game" button
 
 ## 3. Integration
 ### API Functions

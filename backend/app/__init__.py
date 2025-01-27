@@ -5,7 +5,6 @@ from flask_cors import CORS
 def create_app(testing=False):
     """Create and configure the Flask app"""
     app = Flask(__name__)
-    print("Configuring CORS for origins:", "http://localhost:3000")
     CORS(app, resources={
         r"/*": {
             "origins": "*",

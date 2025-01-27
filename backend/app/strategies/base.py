@@ -33,6 +33,7 @@ class BaseStrategy:
     
     def get_opponent_last_move(self) -> Optional[Move]:
         """Get the opponent's move from the last round"""
+
         if not self.history:
             return None
         return (

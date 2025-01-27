@@ -1277,6 +1277,726 @@
           1
         ]
       }
+    },
+    {
+      "game_id": "58fb6017-3f42-468d-be2d-cc01743e1886",
+      "timestamp": "2025-01-27T17:59:22.645759",
+      "player1_strategy": "RandomStrategy",
+      "player2_strategy": "TitForTat",
+      "rounds": [
+        {
+          "round_number": 1,
+          "player1_move": "cooperate",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Random",
+          "player2_reasoning": "Tit for Tat",
+          "player1_score": 3,
+          "player2_score": 3
+        },
+        {
+          "round_number": 2,
+          "player1_move": "cooperate",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Random",
+          "player2_reasoning": "Tit for Tat",
+          "player1_score": 3,
+          "player2_score": 3
+        },
+        {
+          "round_number": 3,
+          "player1_move": "defect",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Random",
+          "player2_reasoning": "Tit for Tat",
+          "player1_score": 5,
+          "player2_score": 0
+        },
+        {
+          "round_number": 4,
+          "player1_move": "cooperate",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Random",
+          "player2_reasoning": "Tit for Tat",
+          "player1_score": 3,
+          "player2_score": 3
+        },
+        {
+          "round_number": 5,
+          "player1_move": "cooperate",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Random",
+          "player2_reasoning": "Tit for Tat",
+          "player1_score": 3,
+          "player2_score": 3
+        }
+      ],
+      "final_scores": {
+        "player1": 17,
+        "player2": 12
+      },
+      "payoff_matrix": {
+        "cooperate_cooperate": [
+          3,
+          3
+        ],
+        "cooperate_defect": [
+          0,
+          5
+        ],
+        "defect_cooperate": [
+          5,
+          0
+        ],
+        "defect_defect": [
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "game_id": "df32ccac-42db-4509-a0c0-665480624cbc",
+      "timestamp": "2025-01-27T18:04:20.837101",
+      "player1_strategy": "AlwaysDefect",
+      "player2_strategy": "TitForTat",
+      "rounds": [
+        {
+          "round_number": 1,
+          "player1_move": "defect",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Always Defect",
+          "player2_reasoning": "Tit for Tat",
+          "player1_score": 5,
+          "player2_score": 0
+        },
+        {
+          "round_number": 2,
+          "player1_move": "defect",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Always Defect",
+          "player2_reasoning": "Tit for Tat",
+          "player1_score": 5,
+          "player2_score": 0
+        },
+        {
+          "round_number": 3,
+          "player1_move": "defect",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Always Defect",
+          "player2_reasoning": "Tit for Tat",
+          "player1_score": 5,
+          "player2_score": 0
+        },
+        {
+          "round_number": 4,
+          "player1_move": "defect",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Always Defect",
+          "player2_reasoning": "Tit for Tat",
+          "player1_score": 5,
+          "player2_score": 0
+        },
+        {
+          "round_number": 5,
+          "player1_move": "defect",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Always Defect",
+          "player2_reasoning": "Tit for Tat",
+          "player1_score": 5,
+          "player2_score": 0
+        }
+      ],
+      "final_scores": {
+        "player1": 25,
+        "player2": 0
+      },
+      "payoff_matrix": {
+        "cooperate_cooperate": [
+          3,
+          3
+        ],
+        "cooperate_defect": [
+          0,
+          5
+        ],
+        "defect_cooperate": [
+          5,
+          0
+        ],
+        "defect_defect": [
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "game_id": "087fb8e4-932b-4c6e-8e96-b72bbc065748",
+      "timestamp": "2025-01-27T18:04:33.966979",
+      "player1_strategy": "TitForTat",
+      "player2_strategy": "AlwaysDefect",
+      "rounds": [
+        {
+          "round_number": 1,
+          "player1_move": "cooperate",
+          "player2_move": "defect",
+          "player1_reasoning": "Tit for Tat",
+          "player2_reasoning": "Always Defect",
+          "player1_score": 0,
+          "player2_score": 5
+        },
+        {
+          "round_number": 2,
+          "player1_move": "cooperate",
+          "player2_move": "defect",
+          "player1_reasoning": "Tit for Tat",
+          "player2_reasoning": "Always Defect",
+          "player1_score": 0,
+          "player2_score": 5
+        },
+        {
+          "round_number": 3,
+          "player1_move": "cooperate",
+          "player2_move": "defect",
+          "player1_reasoning": "Tit for Tat",
+          "player2_reasoning": "Always Defect",
+          "player1_score": 0,
+          "player2_score": 5
+        },
+        {
+          "round_number": 4,
+          "player1_move": "cooperate",
+          "player2_move": "defect",
+          "player1_reasoning": "Tit for Tat",
+          "player2_reasoning": "Always Defect",
+          "player1_score": 0,
+          "player2_score": 5
+        },
+        {
+          "round_number": 5,
+          "player1_move": "cooperate",
+          "player2_move": "defect",
+          "player1_reasoning": "Tit for Tat",
+          "player2_reasoning": "Always Defect",
+          "player1_score": 0,
+          "player2_score": 5
+        }
+      ],
+      "final_scores": {
+        "player1": 0,
+        "player2": 25
+      },
+      "payoff_matrix": {
+        "cooperate_cooperate": [
+          3,
+          3
+        ],
+        "cooperate_defect": [
+          0,
+          5
+        ],
+        "defect_cooperate": [
+          5,
+          0
+        ],
+        "defect_defect": [
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "game_id": "19bb3f52-f72d-4e15-b2aa-530b20ef1697",
+      "timestamp": "2025-01-27T18:05:16.028932",
+      "player1_strategy": "TitForTat",
+      "player2_strategy": "AlwaysDefect",
+      "rounds": [
+        {
+          "round_number": 1,
+          "player1_move": "cooperate",
+          "player2_move": "defect",
+          "player1_reasoning": "Tit for Tat",
+          "player2_reasoning": "Always Defect",
+          "player1_score": 0,
+          "player2_score": 5
+        },
+        {
+          "round_number": 2,
+          "player1_move": "cooperate",
+          "player2_move": "defect",
+          "player1_reasoning": "Tit for Tat",
+          "player2_reasoning": "Always Defect",
+          "player1_score": 0,
+          "player2_score": 5
+        },
+        {
+          "round_number": 3,
+          "player1_move": "cooperate",
+          "player2_move": "defect",
+          "player1_reasoning": "Tit for Tat",
+          "player2_reasoning": "Always Defect",
+          "player1_score": 0,
+          "player2_score": 5
+        },
+        {
+          "round_number": 4,
+          "player1_move": "cooperate",
+          "player2_move": "defect",
+          "player1_reasoning": "Tit for Tat",
+          "player2_reasoning": "Always Defect",
+          "player1_score": 0,
+          "player2_score": 5
+        },
+        {
+          "round_number": 5,
+          "player1_move": "cooperate",
+          "player2_move": "defect",
+          "player1_reasoning": "Tit for Tat",
+          "player2_reasoning": "Always Defect",
+          "player1_score": 0,
+          "player2_score": 5
+        }
+      ],
+      "final_scores": {
+        "player1": 0,
+        "player2": 25
+      },
+      "payoff_matrix": {
+        "cooperate_cooperate": [
+          3,
+          3
+        ],
+        "cooperate_defect": [
+          0,
+          5
+        ],
+        "defect_cooperate": [
+          5,
+          0
+        ],
+        "defect_defect": [
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "game_id": "fc06ce20-6e86-4bd2-87c3-8cac4fe31296",
+      "timestamp": "2025-01-27T18:06:34.335438",
+      "player1_strategy": "GrimTrigger",
+      "player2_strategy": "AlwaysDefect",
+      "rounds": [
+        {
+          "round_number": 1,
+          "player1_move": "cooperate",
+          "player2_move": "defect",
+          "player1_reasoning": "Grim Trigger",
+          "player2_reasoning": "Always Defect",
+          "player1_score": 0,
+          "player2_score": 5
+        },
+        {
+          "round_number": 2,
+          "player1_move": "cooperate",
+          "player2_move": "defect",
+          "player1_reasoning": "Grim Trigger",
+          "player2_reasoning": "Always Defect",
+          "player1_score": 0,
+          "player2_score": 5
+        },
+        {
+          "round_number": 3,
+          "player1_move": "cooperate",
+          "player2_move": "defect",
+          "player1_reasoning": "Grim Trigger",
+          "player2_reasoning": "Always Defect",
+          "player1_score": 0,
+          "player2_score": 5
+        },
+        {
+          "round_number": 4,
+          "player1_move": "cooperate",
+          "player2_move": "defect",
+          "player1_reasoning": "Grim Trigger",
+          "player2_reasoning": "Always Defect",
+          "player1_score": 0,
+          "player2_score": 5
+        },
+        {
+          "round_number": 5,
+          "player1_move": "cooperate",
+          "player2_move": "defect",
+          "player1_reasoning": "Grim Trigger",
+          "player2_reasoning": "Always Defect",
+          "player1_score": 0,
+          "player2_score": 5
+        }
+      ],
+      "final_scores": {
+        "player1": 0,
+        "player2": 25
+      },
+      "payoff_matrix": {
+        "cooperate_cooperate": [
+          3,
+          3
+        ],
+        "cooperate_defect": [
+          0,
+          5
+        ],
+        "defect_cooperate": [
+          5,
+          0
+        ],
+        "defect_defect": [
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "game_id": "4ee29872-fd59-47d9-a232-161e23ebb141",
+      "timestamp": "2025-01-27T18:19:51.316067",
+      "player1_strategy": "TitForTat",
+      "player2_strategy": "AlwaysDefect",
+      "rounds": [
+        {
+          "round_number": 1,
+          "player1_move": "cooperate",
+          "player2_move": "defect",
+          "player1_reasoning": "Tit for Tat",
+          "player2_reasoning": "Always Defect",
+          "player1_score": 0,
+          "player2_score": 5
+        },
+        {
+          "round_number": 2,
+          "player1_move": "defect",
+          "player2_move": "defect",
+          "player1_reasoning": "Tit for Tat",
+          "player2_reasoning": "Always Defect",
+          "player1_score": 1,
+          "player2_score": 1
+        },
+        {
+          "round_number": 3,
+          "player1_move": "defect",
+          "player2_move": "defect",
+          "player1_reasoning": "Tit for Tat",
+          "player2_reasoning": "Always Defect",
+          "player1_score": 1,
+          "player2_score": 1
+        },
+        {
+          "round_number": 4,
+          "player1_move": "defect",
+          "player2_move": "defect",
+          "player1_reasoning": "Tit for Tat",
+          "player2_reasoning": "Always Defect",
+          "player1_score": 1,
+          "player2_score": 1
+        },
+        {
+          "round_number": 5,
+          "player1_move": "defect",
+          "player2_move": "defect",
+          "player1_reasoning": "Tit for Tat",
+          "player2_reasoning": "Always Defect",
+          "player1_score": 1,
+          "player2_score": 1
+        }
+      ],
+      "final_scores": {
+        "player1": 4,
+        "player2": 9
+      },
+      "payoff_matrix": {
+        "cooperate_cooperate": [
+          3,
+          3
+        ],
+        "cooperate_defect": [
+          0,
+          5
+        ],
+        "defect_cooperate": [
+          5,
+          0
+        ],
+        "defect_defect": [
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "game_id": "9044c6ae-3d4a-4834-a91e-2c54be9e7a14",
+      "timestamp": "2025-01-27T18:20:04.673823",
+      "player1_strategy": "AlwaysDefect",
+      "player2_strategy": "Pavlov",
+      "rounds": [
+        {
+          "round_number": 1,
+          "player1_move": "defect",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Always Defect",
+          "player2_reasoning": "Pavlov",
+          "player1_score": 5,
+          "player2_score": 0
+        },
+        {
+          "round_number": 2,
+          "player1_move": "defect",
+          "player2_move": "defect",
+          "player1_reasoning": "Always Defect",
+          "player2_reasoning": "Pavlov",
+          "player1_score": 1,
+          "player2_score": 1
+        },
+        {
+          "round_number": 3,
+          "player1_move": "defect",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Always Defect",
+          "player2_reasoning": "Pavlov",
+          "player1_score": 5,
+          "player2_score": 0
+        },
+        {
+          "round_number": 4,
+          "player1_move": "defect",
+          "player2_move": "defect",
+          "player1_reasoning": "Always Defect",
+          "player2_reasoning": "Pavlov",
+          "player1_score": 1,
+          "player2_score": 1
+        },
+        {
+          "round_number": 5,
+          "player1_move": "defect",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Always Defect",
+          "player2_reasoning": "Pavlov",
+          "player1_score": 5,
+          "player2_score": 0
+        }
+      ],
+      "final_scores": {
+        "player1": 17,
+        "player2": 2
+      },
+      "payoff_matrix": {
+        "cooperate_cooperate": [
+          3,
+          3
+        ],
+        "cooperate_defect": [
+          0,
+          5
+        ],
+        "defect_cooperate": [
+          5,
+          0
+        ],
+        "defect_defect": [
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "game_id": "a82dffcd-f861-4cb4-8e5c-cfc15bd90cb3",
+      "timestamp": "2025-01-27T18:22:49.957451",
+      "player1_strategy": "Pavlov",
+      "player2_strategy": "TitForTat",
+      "rounds": [
+        {
+          "round_number": 1,
+          "player1_move": "cooperate",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Pavlov",
+          "player2_reasoning": "Tit for Tat",
+          "player1_score": 3,
+          "player2_score": 3
+        },
+        {
+          "round_number": 2,
+          "player1_move": "cooperate",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Pavlov",
+          "player2_reasoning": "Tit for Tat",
+          "player1_score": 3,
+          "player2_score": 3
+        },
+        {
+          "round_number": 3,
+          "player1_move": "cooperate",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Pavlov",
+          "player2_reasoning": "Tit for Tat",
+          "player1_score": 3,
+          "player2_score": 3
+        },
+        {
+          "round_number": 4,
+          "player1_move": "cooperate",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Pavlov",
+          "player2_reasoning": "Tit for Tat",
+          "player1_score": 3,
+          "player2_score": 3
+        },
+        {
+          "round_number": 5,
+          "player1_move": "cooperate",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Pavlov",
+          "player2_reasoning": "Tit for Tat",
+          "player1_score": 3,
+          "player2_score": 3
+        }
+      ],
+      "final_scores": {
+        "player1": 15,
+        "player2": 15
+      },
+      "payoff_matrix": {
+        "cooperate_cooperate": [
+          3,
+          3
+        ],
+        "cooperate_defect": [
+          0,
+          5
+        ],
+        "defect_cooperate": [
+          5,
+          0
+        ],
+        "defect_defect": [
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "game_id": "24e8e84b-6a33-4d39-8369-0747afec3402",
+      "timestamp": "2025-01-27T18:23:00.081855",
+      "player1_strategy": "RandomStrategy",
+      "player2_strategy": "Pavlov",
+      "rounds": [
+        {
+          "round_number": 1,
+          "player1_move": "cooperate",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Random",
+          "player2_reasoning": "Pavlov",
+          "player1_score": 3,
+          "player2_score": 3
+        },
+        {
+          "round_number": 2,
+          "player1_move": "cooperate",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Random",
+          "player2_reasoning": "Pavlov",
+          "player1_score": 3,
+          "player2_score": 3
+        },
+        {
+          "round_number": 3,
+          "player1_move": "defect",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Random",
+          "player2_reasoning": "Pavlov",
+          "player1_score": 5,
+          "player2_score": 0
+        },
+        {
+          "round_number": 4,
+          "player1_move": "cooperate",
+          "player2_move": "defect",
+          "player1_reasoning": "Random",
+          "player2_reasoning": "Pavlov",
+          "player1_score": 0,
+          "player2_score": 5
+        },
+        {
+          "round_number": 5,
+          "player1_move": "cooperate",
+          "player2_move": "defect",
+          "player1_reasoning": "Random",
+          "player2_reasoning": "Pavlov",
+          "player1_score": 0,
+          "player2_score": 5
+        },
+        {
+          "round_number": 6,
+          "player1_move": "cooperate",
+          "player2_move": "defect",
+          "player1_reasoning": "Random",
+          "player2_reasoning": "Pavlov",
+          "player1_score": 0,
+          "player2_score": 5
+        },
+        {
+          "round_number": 7,
+          "player1_move": "cooperate",
+          "player2_move": "defect",
+          "player1_reasoning": "Random",
+          "player2_reasoning": "Pavlov",
+          "player1_score": 0,
+          "player2_score": 5
+        },
+        {
+          "round_number": 8,
+          "player1_move": "cooperate",
+          "player2_move": "defect",
+          "player1_reasoning": "Random",
+          "player2_reasoning": "Pavlov",
+          "player1_score": 0,
+          "player2_score": 5
+        },
+        {
+          "round_number": 9,
+          "player1_move": "defect",
+          "player2_move": "defect",
+          "player1_reasoning": "Random",
+          "player2_reasoning": "Pavlov",
+          "player1_score": 1,
+          "player2_score": 1
+        },
+        {
+          "round_number": 10,
+          "player1_move": "cooperate",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Random",
+          "player2_reasoning": "Pavlov",
+          "player1_score": 3,
+          "player2_score": 3
+        }
+      ],
+      "final_scores": {
+        "player1": 15,
+        "player2": 35
+      },
+      "payoff_matrix": {
+        "cooperate_cooperate": [
+          3,
+          3
+        ],
+        "cooperate_defect": [
+          0,
+          5
+        ],
+        "defect_cooperate": [
+          5,
+          0
+        ],
+        "defect_defect": [
+          1,
+          1
+        ]
+      }
     }
   ]
 }

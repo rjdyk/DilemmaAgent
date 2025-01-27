@@ -42,11 +42,13 @@ class Game:
 
     def get_player1_move(self) -> Move:
         """Get player 1's move based on their strategy"""
-        return self.player1_strategy.get_move(self.current_round)
+        move = self.player1_strategy.get_move(self.current_round)
+        return move
 
     def get_player2_move(self) -> Move:
         """Get player 2's move based on their strategy"""
-        return self.player2_strategy.get_move(self.current_round)
+        move = self.player2_strategy.get_move(self.current_round)
+        return move
 
     def process_round(self) -> Optional[RoundResult]:
         """
@@ -85,6 +87,9 @@ class Game:
         
         # Add to game history
         self.rounds.append(round_result)
+
+        self.player1_strategy.add_round(round_result)
+        self.player2_strategy.add_round(round_result)
         
         # Increment round counter
         self.current_round += 1
@@ -126,3 +131,13 @@ class Game:
     def is_game_over(self) -> bool:
         """Check if the game has ended"""
         return self.current_round >= self.max_rounds or self.game_over
+    
+    def reset(self):
+        """Reset the game and strategies to initial state"""
+        self.current_round = 0
+        self.game_over = False
+        self.rounds = []
+        self.player1_total_score = 0
+        self.player2_total_score = 0
+        self.player1_strategy.reset()
+        self.player2_strategy.reset()

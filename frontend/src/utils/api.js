@@ -39,7 +39,9 @@ export const getGameState = async (gameId) => {
 };
 
 export const makeMove = async (gameId, move, reasoning) => {
+  console.log(`Making move for game ${gameId}`);
   const response = await api.post(`/game/${gameId}/move`, { move, reasoning });
+  console.log('Move response:', response.data);
   return response.data;
 };
 

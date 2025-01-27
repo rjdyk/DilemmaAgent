@@ -112,6 +112,7 @@ def make_move(game_id: str):
     try:
         # Process the round - moves come from strategies
         result = game.process_round()
+        print(f"Round result: P1 move: {result.player1_move}, P2 move: {result.player2_move}")
         if not result:
             return jsonify({"error": "Failed to process round"}), 500
 
@@ -143,8 +144,6 @@ def make_move(game_id: str):
 @bp.route('/game/<game_id>/complete', methods=['POST'])
 def complete_game(game_id: str):
     """Auto-complete all remaining rounds in the game"""
-
-    print(f"Completing game {game_id}, current storage:", game_storage.active_games)
 
     game = game_storage.get_game(game_id)
     if not game:

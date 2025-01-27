@@ -25,19 +25,65 @@ def create_round_result(round_num: int, p1_move: Move, p2_move: Move) -> RoundRe
     )
 
 class TestTitForTat:
-    def test_initial_move(self):
-        strategy = TitForTat(is_player1=True)
+    def test_initial_move_as_player2(self):
+        """Player 2 TitForTat should cooperate on first move"""
+        strategy = TitForTat(is_player1=False)
         assert strategy.get_move(0) == Move.COOPERATE
 
-    def test_copies_opponent_move_as_player1(self):
-        strategy = TitForTat(is_player1=True)
-        strategy.add_round(create_round_result(1, Move.COOPERATE, Move.DEFECT))
-        assert strategy.get_move(1) == Move.DEFECT
-
-    def test_copies_opponent_move_as_player2(self):
+    def test_copies_cooperate_as_player2(self):
+        """Player 2 TitForTat should cooperate after player 1 cooperates"""
         strategy = TitForTat(is_player1=False)
+        # Add round where player 1 cooperated
+        strategy.add_round(create_round_result(1, Move.COOPERATE, Move.COOPERATE))
+        assert strategy.get_move(1) == Move.COOPERATE
+
+    def test_copies_defect_as_player2(self):
+        """Player 2 TitForTat should defect after player 1 defects"""
+        strategy = TitForTat(is_player1=False)
+        # Add round where player 1 defected
         strategy.add_round(create_round_result(1, Move.DEFECT, Move.COOPERATE))
         assert strategy.get_move(1) == Move.DEFECT
+
+    def test_multiple_rounds_as_player2(self):
+        """Player 2 TitForTat should copy player 1's previous move each round"""
+        strategy = TitForTat(is_player1=False)
+        
+        # Round 1: Player 1 cooperates
+        strategy.add_round(create_round_result(1, Move.COOPERATE, Move.COOPERATE))
+        assert strategy.get_move(1) == Move.COOPERATE
+        
+        # Round 2: Player 1 defects
+        strategy.add_round(create_round_result(2, Move.DEFECT, Move.COOPERATE))
+        assert strategy.get_move(2) == Move.DEFECT
+        
+        # Round 3: Player 1 cooperates again
+        strategy.add_round(create_round_result(3, Move.COOPERATE, Move.DEFECT))
+        assert strategy.get_move(3) == Move.COOPERATE
+
+    def test_ignores_own_moves_as_player2(self):
+        """Player 2 TitForTat should only look at player 1's moves, not its own"""
+        strategy = TitForTat(is_player1=False)
+        # Player 1 cooperates, Player 2 defects
+        strategy.add_round(create_round_result(1, Move.COOPERATE, Move.DEFECT))
+        # Should still copy Player 1's cooperate, not its own defect
+        assert strategy.get_move(1) == Move.COOPERATE
+        
+    def test_handles_empty_history_as_player2(self):
+        """Player 2 TitForTat should handle empty history gracefully"""
+        strategy = TitForTat(is_player1=False)
+        strategy.reset()  # Explicitly empty history
+        assert strategy.get_move(0) == Move.COOPERATE
+
+    def test_reset_as_player2(self):
+        """Player 2 TitForTat should reset properly between games"""
+        strategy = TitForTat(is_player1=False)
+        # Add some history
+        strategy.add_round(create_round_result(1, Move.DEFECT, Move.COOPERATE))
+        assert strategy.get_move(1) == Move.DEFECT
+        
+        # Reset and verify back to initial state
+        strategy.reset()
+        assert strategy.get_move(0) == Move.COOPERATE
 
 class TestPavlov:
     def test_initial_move(self):
