@@ -1,3 +1,5 @@
+import os
+from dotenv import load_dotenv
 from enum import Enum
 from typing import Dict, Type
 
@@ -8,7 +10,10 @@ from .tit_for_tat import TitForTat
 from .pavlov import Pavlov
 from .random_strategy import RandomStrategy
 from .grim import GrimTrigger
+from .haiku_strategy import HaikuStrategy
 
+# Load environment variables
+load_dotenv()
 
 class StrategyType(Enum):
     """Available opponent strategies"""
@@ -18,7 +23,7 @@ class StrategyType(Enum):
     PAVLOV = "pavlov"
     RANDOM = "random"
     GRIM = "grim"
-    AI_AGENT = "ai_agent"
+    CLAUDE_HAIKU = "claude_haiku"
 
 
 # Registry mapping strategy types to their implementing classes
@@ -61,8 +66,20 @@ def create_strategy(strategy_type: StrategyType, is_player1: bool) -> BaseStrate
         BaseStrategy: A new instance of the requested strategy
     
     Raises:
-        ValueError: If the strategy type is not registered
+        ValueError: If the strategy type is not registered or environment variables are missing
     """
+    # Special handling for Haiku strategy since it needs API key
+    if strategy_type == StrategyType.CLAUDE_HAIKU:
+        api_key = os.getenv('CLAUDE_API_KEY')
+        if not api_key:
+            raise ValueError("CLAUDE_API_KEY not found in environment variables")
+        return HaikuStrategy(
+            name="Claude Haiku",
+            is_player1=is_player1,
+            api_key=api_key
+        )
+    
+    # Handle other strategies normally
     if strategy_type not in _strategy_registry:
         raise ValueError(f"Strategy {strategy_type.value} is not implemented yet")
     

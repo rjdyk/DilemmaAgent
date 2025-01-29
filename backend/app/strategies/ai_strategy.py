@@ -41,15 +41,9 @@ class AIStrategy(BaseStrategy):
         # Try to get response
         for attempt in range(self.max_retries):
             try:
-                # First get the response without updating tokens
                 response = await self._get_ai_response(current_round)
                 
-                # Check if this response would exceed our budget
-                if self.total_tokens_used + response.token_usage.total_tokens > self.token_budget:
-                    self._last_error = "Token budget exceeded"
-                    return self._get_fallback_move(self._last_error)
-                
-                # If we're within budget, update tokens and record
+                # Track the tokens and get move
                 self._update_token_usage(response.token_usage)
                 self._record_interaction(current_round, response)
                 return response.move
@@ -87,6 +81,11 @@ class AIStrategy(BaseStrategy):
             "reasoning": response.reasoning,
             "token_usage": asdict(response.token_usage)
         })
+
+    def _estimate_token_usage(self, text: str) -> int:
+        """Rough estimate of token count for a text string"""
+        # Very rough approximation: ~1 token per 4 chars
+        return len(text) // 4 + 100  # Add padding for safety
 
     async def _get_ai_response(self, current_round: int) -> AIResponse:
         """

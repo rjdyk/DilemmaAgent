@@ -1,5 +1,56 @@
 # TODO
 
+# Phase 3
+## Implementation Plan
+
+### Phase 3.1: Core AI Infrastructure
+1. Create AIStrategy base class
+2. Implement token tracking
+3. Add basic error handling
+4. Update game logic
+
+### Phase 3.2: Model Integration
+1. Implement HaikuStrategy
+2. Add prompt management
+3. Test API integration
+4. Add failure handling
+
+### Phase 3.3: Enhanced Features
+1. Add context management
+2. Implement history truncation
+3. Add detailed logging
+4. Update game state tracking
+
+## Future Work (Out of Scope for MVP3)
+
+### Additional Models
+- Support for GPT-4
+- Open source model integration
+- Model comparison tools
+- Custom prompt engineering interface
+
+### Enhanced Features
+- Dynamic token budgeting
+- Advanced context management
+- Performance analytics
+- Strategy effectiveness metrics
+- Training data generation
+
+### UI Improvements
+- AI reasoning display
+- Token usage visualization
+- Error status indicators
+- Context inspection tools
+
+## Known Limitations
+1. Fixed prompts only
+2. Basic error handling
+3. Limited context management
+4. No dynamic token adjustment
+5. Single AI agent per game
+6. Basic fallback mechanisms
+
+
 # Phase 2
 ## 1. Strategy Implementation
 - [x] Implement AlwaysDefect strategy
