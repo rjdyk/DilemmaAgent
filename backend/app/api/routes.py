@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_cors import CORS
+import asyncio
 from typing import Dict
 from uuid import uuid4
 
@@ -8,12 +9,22 @@ from app.models.game import Game
 from app.strategies import StrategyType, create_strategy, get_available_strategies
 from app.utils.storage import GameStorage
 from app.utils.history import GameHistory
+from app.strategies.ai_strategy import AIStrategy
 
 bp = Blueprint('api', __name__, url_prefix='/api')
 
 # Initialize storage
 game_storage = GameStorage()
 game_history = GameHistory()
+
+# Helper function to run async code in sync routes
+def run_async(coro):
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    try:
+        return loop.run_until_complete(coro)
+    finally:
+        loop.close()
 
 # Error handlers
 @bp.errorhandler(404)
@@ -110,9 +121,9 @@ def make_move(game_id: str):
         return jsonify({"error": "Game not found"}), 404
     
     try:
-        # Process the round - moves come from strategies
-        result = game.process_round()
-        print(f"Round result: P1 move: {result.player1_move}, P2 move: {result.player2_move}")
+        # Process the round asynchronously
+        result = run_async(game.process_round())
+        
         if not result:
             return jsonify({"error": "Failed to process round"}), 500
 
@@ -122,8 +133,8 @@ def make_move(game_id: str):
             game_history.save_game(game_id, game)
             game_storage.remove_game(game_id)
             
-        # Return round result
-        return jsonify({
+        # Prepare response with AI-specific information
+        response = {
             "round_number": result.round_number,
             "player1_move": result.player1_move.value,
             "player2_move": result.player2_move.value,
@@ -134,45 +145,84 @@ def make_move(game_id: str):
                 "player1": game.player1_total_score,
                 "player2": game.player2_total_score
             }
-        })
+        }
+
+        # Add AI-specific information if present
+        if result.token_usage:
+            response["token_usage"] = {
+                "prompt_tokens": result.token_usage.prompt_tokens,
+                "completion_tokens": result.token_usage.completion_tokens,
+                "total_tokens": result.token_usage.total_tokens
+            }
+        
+        if result.api_errors:
+            response["api_errors"] = result.api_errors
+
+        return jsonify(response)
         
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
     except Exception as e:
         return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
-    
+      
 @bp.route('/game/<game_id>/complete', methods=['POST'])
 def complete_game(game_id: str):
     """Auto-complete all remaining rounds in the game"""
-
     game = game_storage.get_game(game_id)
     if not game:
         return jsonify({"error": "Game not found"}), 404
         
     try:
-        # Run all remaining rounds
-        round_results = game.run_all_rounds()
+        # Run all remaining rounds asynchronously
+        round_results = run_async(game.run_all_rounds())
         
         # Save completed game to history and remove from active storage
         game_history.save_game(game_id, game)
         game_storage.remove_game(game_id)
         
-        return jsonify({
-            "rounds": [
-                {
-                    "round_number": r.round_number,
-                    "player1_move": r.player1_move.value,
-                    "player2_move": r.player2_move.value,
-                    "player1_score": r.player1_score,
-                    "player2_score": r.player2_score
+        # Prepare response with AI-specific information
+        rounds_data = []
+        total_tokens = 0
+        api_errors = []
+
+        for r in round_results:
+            round_data = {
+                "round_number": r.round_number,
+                "player1_move": r.player1_move.value,
+                "player2_move": r.player2_move.value,
+                "player1_score": r.player1_score,
+                "player2_score": r.player2_score
+            }
+            
+            if r.token_usage:
+                round_data["token_usage"] = {
+                    "prompt_tokens": r.token_usage.prompt_tokens,
+                    "completion_tokens": r.token_usage.completion_tokens,
+                    "total_tokens": r.token_usage.total_tokens
                 }
-                for r in round_results
-            ],
+                total_tokens += r.token_usage.total_tokens
+                
+            if r.api_errors:
+                round_data["api_errors"] = r.api_errors
+                api_errors.append(r.api_errors)
+                
+            rounds_data.append(round_data)
+
+        response = {
+            "rounds": rounds_data,
             "final_scores": {
                 "player1": game.player1_total_score,
                 "player2": game.player2_total_score  
             }
-        })
+        }
+
+        if total_tokens > 0:
+            response["total_token_usage"] = total_tokens
+        
+        if api_errors:
+            response["api_errors"] = api_errors
+
+        return jsonify(response)
         
     except ValueError as e:
         return jsonify({"error": str(e)}), 400

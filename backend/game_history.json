@@ -1997,6 +1997,126 @@
           1
         ]
       }
+    },
+    {
+      "game_id": "1229ebdd-b71b-4d41-bd3e-820aab7de7e6",
+      "timestamp": "2025-01-27T19:01:01.825956",
+      "player1_strategy": "TitForTat",
+      "player2_strategy": "RandomStrategy",
+      "rounds": [
+        {
+          "round_number": 1,
+          "player1_move": "cooperate",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Tit for Tat",
+          "player2_reasoning": "Random",
+          "player1_score": 3,
+          "player2_score": 3
+        },
+        {
+          "round_number": 2,
+          "player1_move": "cooperate",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Tit for Tat",
+          "player2_reasoning": "Random",
+          "player1_score": 3,
+          "player2_score": 3
+        },
+        {
+          "round_number": 3,
+          "player1_move": "cooperate",
+          "player2_move": "defect",
+          "player1_reasoning": "Tit for Tat",
+          "player2_reasoning": "Random",
+          "player1_score": 0,
+          "player2_score": 5
+        },
+        {
+          "round_number": 4,
+          "player1_move": "defect",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Tit for Tat",
+          "player2_reasoning": "Random",
+          "player1_score": 5,
+          "player2_score": 0
+        },
+        {
+          "round_number": 5,
+          "player1_move": "cooperate",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Tit for Tat",
+          "player2_reasoning": "Random",
+          "player1_score": 3,
+          "player2_score": 3
+        },
+        {
+          "round_number": 6,
+          "player1_move": "cooperate",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Tit for Tat",
+          "player2_reasoning": "Random",
+          "player1_score": 3,
+          "player2_score": 3
+        },
+        {
+          "round_number": 7,
+          "player1_move": "cooperate",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Tit for Tat",
+          "player2_reasoning": "Random",
+          "player1_score": 3,
+          "player2_score": 3
+        },
+        {
+          "round_number": 8,
+          "player1_move": "cooperate",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Tit for Tat",
+          "player2_reasoning": "Random",
+          "player1_score": 3,
+          "player2_score": 3
+        },
+        {
+          "round_number": 9,
+          "player1_move": "cooperate",
+          "player2_move": "defect",
+          "player1_reasoning": "Tit for Tat",
+          "player2_reasoning": "Random",
+          "player1_score": 0,
+          "player2_score": 5
+        },
+        {
+          "round_number": 10,
+          "player1_move": "defect",
+          "player2_move": "cooperate",
+          "player1_reasoning": "Tit for Tat",
+          "player2_reasoning": "Random",
+          "player1_score": 5,
+          "player2_score": 0
+        }
+      ],
+      "final_scores": {
+        "player1": 28,
+        "player2": 28
+      },
+      "payoff_matrix": {
+        "cooperate_cooperate": [
+          3,
+          3
+        ],
+        "cooperate_defect": [
+          0,
+          5
+        ],
+        "defect_cooperate": [
+          5,
+          0
+        ],
+        "defect_defect": [
+          1,
+          1
+        ]
+      }
     }
   ]
 }

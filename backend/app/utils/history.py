@@ -3,6 +3,7 @@ import json
 from datetime import datetime
 from pathlib import Path
 from app.models.game import Game
+from app.strategies.ai_strategy import AIStrategy
 
 class GameHistory:
     def __init__(self, storage_path: str = "game_history.json"):
@@ -15,6 +16,8 @@ class GameHistory:
     
     def save_game(self, game_id: str, game: Game):
         history = self._read_history()
+        
+        # Start with the original game data structure
         game_data = {
             "game_id": game_id,
             "timestamp": game.timestamp.isoformat(),
@@ -32,6 +35,20 @@ class GameHistory:
                 "defect_defect": game.payoff_matrix.defect_defect
             }
         }
+
+        # Add AI-specific data only if AI strategies are involved
+        if isinstance(game.player1_strategy, AIStrategy):
+            game_data["player1_ai_data"] = {
+                "total_tokens": game.player1_strategy.total_tokens_used,
+                "conversation_history": game.player1_strategy.conversation_history
+            }
+            
+        if isinstance(game.player2_strategy, AIStrategy):
+            game_data["player2_ai_data"] = {
+                "total_tokens": game.player2_strategy.total_tokens_used,
+                "conversation_history": game.player2_strategy.conversation_history
+            }
+
         history["completed_games"].append(game_data)
         self._write_history(history)
         
