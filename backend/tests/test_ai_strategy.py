@@ -6,12 +6,15 @@ from app.models.types import Move, TokenUsage
 from app.strategies.ai_strategy import AIStrategy, AIResponse
 
 class MockAIStrategy(AIStrategy):
-    """Mock AI strategy for testing"""
     def __init__(self, name="Mock AI", is_player1=True, should_fail=False, token_budget=4000):
         super().__init__(name=name, is_player1=is_player1, token_budget=token_budget)
         self.should_fail = should_fail
         
     async def _get_ai_response(self, current_round: int) -> AIResponse:
+        # Check token budget here instead
+        if self.total_tokens_used + 100 > self.token_budget:
+            raise ValueError("Token budget exceeded")
+            
         if self.should_fail:
             raise Exception("Simulated API failure")
             

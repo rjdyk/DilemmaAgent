@@ -38,10 +38,6 @@ Always respond with a JSON object containing:
     async def _get_ai_response(self, current_round: int) -> AIResponse:
         """Get next move from Claude Haiku"""
 
-        estimated_tokens = self._estimate_token_usage(self._format_history()) + 200
-        if self.total_tokens_used + estimated_tokens > self.token_budget:
-            raise ValueError("Token budget exceeded")
-        
         # Build the game history context
         history_text = self._format_history()
         

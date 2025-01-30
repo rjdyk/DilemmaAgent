@@ -31,9 +31,23 @@ describe('GameBoard', () => {
       />
     );
 
-    expect(screen.getByText('Round: 0 / 5')).toBeInTheDocument();
-    expect(screen.getByText('Player 1: 0 points')).toBeInTheDocument();
-    expect(screen.getByText('Player 2: 0 points')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Game in Progress' })).toBeInTheDocument();
+
+    expect(screen.getByText((content, element) => {
+      return element.classList.contains('score-value') && 
+             element.parentElement.querySelector('.score-label').textContent === 'Round' &&
+             content.includes('0');
+    })).toBeInTheDocument();
+
+    expect(screen.getByText((content, element) => {
+      return element.classList.contains('score-value') && content === '0' &&
+             element.parentElement.querySelector('.score-label').textContent === 'Player 1';
+    })).toBeInTheDocument();
+    
+    expect(screen.getByText((content, element) => {
+      return element.classList.contains('score-value') && content === '0' &&
+             element.parentElement.querySelector('.score-label').textContent === 'Player 2';
+    })).toBeInTheDocument();
     expect(screen.getByText('Auto-Complete Game')).toBeInTheDocument();
   });
 
@@ -114,8 +128,8 @@ describe('GameBoard', () => {
     );
   
     // Look for table headers
-    expect(screen.getByText('Player 1 Move')).toBeInTheDocument();
-    expect(screen.getByText('Player 2 Move')).toBeInTheDocument();
+    expect(screen.getByRole('columnheader', { name: 'Player 1' })).toBeInTheDocument();
+    expect(screen.getByRole('columnheader', { name: 'Player 2' })).toBeInTheDocument()
     
     // Use getAllByText for moves since there are multiple
     const cooperateMoves = screen.getAllByText('cooperate');

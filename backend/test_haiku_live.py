@@ -2,6 +2,7 @@ import asyncio
 import logging
 import os
 from dotenv import load_dotenv
+import json
 
 from app.strategies import create_strategy, StrategyType
 from app.models.game import Game
@@ -25,15 +26,20 @@ async def run_test_game():
         logger.info(f"Initial Haiku token count: {haiku_strategy.total_tokens_used}")
         
         # Create game
-        game = Game(haiku_strategy, always_coop, max_rounds=3)  # Using 3 rounds for quick testing
+        game = Game(haiku_strategy, always_coop, max_rounds=3)
         logger.info("Created game instance")
         
         # Run rounds
         for round_num in range(3):
             logger.info(f"\nProcessing round {round_num + 1}")
-            
-            # Log token usage before round
             logger.info(f"Tokens used before round: {haiku_strategy.total_tokens_used}")
+            
+            # Log the full AI response before processing the round
+            ai_response = await haiku_strategy._get_ai_response(round_num)
+            logger.info("Full AI Response:")
+            logger.info(f"Move: {ai_response.move}")
+            logger.info(f"Reasoning: {ai_response.reasoning}")
+            logger.info(f"Token Usage: {ai_response.token_usage}")
             
             # Process round
             result = await game.process_round()
@@ -41,9 +47,15 @@ async def run_test_game():
             # Log round results
             logger.info(f"Round {round_num + 1} results:")
             logger.info(f"Haiku move: {result.player1_move}")
+            logger.info(f"Haiku reasoning (from game): {result.player1_reasoning}")
             logger.info(f"Always Cooperate move: {result.player2_move}")
             logger.info(f"Scores - Haiku: {result.player1_score}, Always Cooperate: {result.player2_score}")
             logger.info(f"Tokens used after round: {haiku_strategy.total_tokens_used}")
+
+            # Log the AI's conversation history
+            logger.info("\nAI Conversation History:")
+            for entry in haiku_strategy.conversation_history:
+                logger.info(json.dumps(entry, indent=2))
             
             if hasattr(game, 'ai_errors') and game.ai_errors:
                 logger.warning(f"AI errors detected: {game.ai_errors}")
@@ -58,12 +70,9 @@ async def run_test_game():
         raise
 
 if __name__ == "__main__":
-    # Ensure environment is loaded
     load_dotenv()
     
-    # Verify API key exists
     if not os.getenv('CLAUDE_API_KEY'):
         raise ValueError("CLAUDE_API_KEY not found in environment")
     
-    # Run the test
     asyncio.run(run_test_game())

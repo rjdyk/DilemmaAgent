@@ -34,15 +34,16 @@ def test_game_storage_removal(storage):
     storage.remove_game(game_id)
     assert storage.get_game(game_id) is None
 
-def test_game_history_save_and_retrieve(history):
+@pytest.mark.asyncio  # Add this decorator
+async def test_game_history_save_and_retrieve(history):
     """Test saving and retrieving a completed game"""
     player1_strategy = AlwaysCooperate(is_player1=True)
     player2_strategy = AlwaysCooperate(is_player1=False)
     game = Game(player1_strategy, player2_strategy)
     game_id = "test_id"
     
-    # Play a round
-    game.process_round()
+    # Play a round - add await here
+    await game.process_round()
     game.game_over = True
     
     # Save game

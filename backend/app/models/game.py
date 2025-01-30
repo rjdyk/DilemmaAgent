@@ -28,6 +28,18 @@ class Game:
             defect_defect=(1, 1)
         )
         self.payoff_matrix = payoff_matrix or default_matrix
+        
+        self.player1_model = (
+            player1_strategy.model_name if isinstance(player1_strategy, AIStrategy) else None
+        )
+        self.player2_model = (
+            player2_strategy.model_name if isinstance(player2_strategy, AIStrategy) else None
+        )
+        self.has_ai_player = isinstance(player1_strategy, AIStrategy) or isinstance(player2_strategy, AIStrategy)
+        self.ai_errors = {
+            "player1": None,
+            "player2": None
+        }
 
         self.payoff_dict = {
             (Move.COOPERATE, Move.COOPERATE): self.payoff_matrix.cooperate_cooperate,
@@ -79,51 +91,71 @@ class Game:
         if self.is_game_over():
             raise ValueError("Cannot process round: game is already over")
 
-        # Get moves from both players
+        # Get moves from both players - error handling already done in strategies
         player1_move = await self.get_player1_move()
         player2_move = await self.get_player2_move()
-        
-        # Calculate scores for this round
+
+        # Get reasoning - for AI strategies this will include their explanation
+        player1_reasoning = (
+            self.player1_strategy.conversation_history[-1]["reasoning"]  # AI stores its reasoning here
+            if isinstance(self.player1_strategy, AIStrategy)
+            else self.player1_strategy.name
+        )
+        player2_reasoning = (
+            self.player2_strategy.conversation_history[-1]["reasoning"]  # AI stores its reasoning here
+            if isinstance(self.player2_strategy, AIStrategy) 
+            else self.player2_strategy.name
+        )       
+
+        # Calculate scores
         player1_score, player2_score = self.calculate_scores(player1_move, player2_move)
         
         # Update total scores
         self.player1_total_score += player1_score
         self.player2_total_score += player2_score
 
+        # Get token usage if applicable
         token_usage = None
-        if isinstance(self.player1_strategy, AIStrategy):
+        if isinstance(self.player1_strategy, AIStrategy) or isinstance(self.player2_strategy, AIStrategy):
+            total_prompt_tokens = 0
+            total_completion_tokens = 0
+            
+            if isinstance(self.player1_strategy, AIStrategy):
+                total_prompt_tokens += self.player1_strategy.total_tokens_used
+            if isinstance(self.player2_strategy, AIStrategy):
+                total_prompt_tokens += self.player2_strategy.total_tokens_used
+                
             token_usage = TokenUsage(
-                prompt_tokens=self.player1_strategy.total_tokens_used,
-                completion_tokens=0,  # We'll need to update this when implementing specific AI strategies
-                total_tokens=self.player1_strategy.total_tokens_used
+                prompt_tokens=total_prompt_tokens,
+                completion_tokens=0,  # Will be updated when we implement completion token tracking
+                total_tokens=total_prompt_tokens
             )
-        
+
         # Create round result
         round_result = RoundResult(
             round_number=self.current_round + 1,
             player1_move=player1_move,
             player2_move=player2_move,
-            player1_reasoning=self.player1_strategy.name,
-            player2_reasoning=self.player2_strategy.name,
+            player1_reasoning=player1_reasoning,
+            player2_reasoning=player2_reasoning,
             player1_score=player1_score,
             player2_score=player2_score,
             token_usage=token_usage,
-            api_errors=self.ai_errors.get("player1") or self.ai_errors.get("player2")
+            api_errors=None  # The strategies handle their own errors
         )
-        
-        # Add to game history
-        self.rounds.append(round_result)
 
+        # Update histories
+        self.rounds.append(round_result)
         self.player1_strategy.add_round(round_result)
         self.player2_strategy.add_round(round_result)
-        
+
         # Increment round counter
         self.current_round += 1
         
-        # Check if this was the final round
+        # Check for game over
         if self.current_round >= self.max_rounds:
             self.game_over = True
-            
+
         return round_result
     
     async def run_all_rounds(self) -> List[RoundResult]:

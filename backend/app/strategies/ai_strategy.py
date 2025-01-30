@@ -38,23 +38,34 @@ class AIStrategy(BaseStrategy):
         """Get the AI's next move"""
         self.current_round = current_round
 
-        # Try to get response
+        # Token budget check 
+        estimated_next_tokens = 200  
+        if self.total_tokens_used + estimated_next_tokens > self.token_budget:
+            self._last_error = "Token budget exceeded"
+            return self._get_fallback_move(self._last_error)
+
+        last_error = None
         for attempt in range(self.max_retries):
             try:
                 response = await self._get_ai_response(current_round)
                 
-                # Track the tokens and get move
+                # Check if this response would exceed budget
+                if self.total_tokens_used + response.token_usage.total_tokens > self.token_budget:
+                    self._last_error = "Token budget would be exceeded"
+                    return self._get_fallback_move(self._last_error)
+                    
                 self._update_token_usage(response.token_usage)
                 self._record_interaction(current_round, response)
                 return response.move
 
             except Exception as e:
-                self._last_error = str(e)
+                last_error = str(e)
                 if attempt < self.max_retries - 1:
                     await asyncio.sleep(self.retry_delay)
-                continue
-
-        self._last_error = f"Failed after {self.max_retries} attempts"
+                    continue
+        
+        # If we get here, we've failed all retries
+        self._last_error = f"Failed after {self.max_retries} attempts. Last error: {last_error}"
         return self._get_fallback_move(self._last_error)
 
     def _get_fallback_move(self, reason: str) -> Move:

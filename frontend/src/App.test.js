@@ -89,9 +89,12 @@ describe('App', () => {
   
     await waitFor(() => {
       // Look for actual elements that appear in GameBoard
-      expect(screen.getByText('Game Progress')).toBeInTheDocument();
-      expect(screen.getByText('Round: 0 / 5')).toBeInTheDocument();
-      expect(screen.getByText('Auto-Complete Game')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Game in Progress' })).toBeInTheDocument();
+      expect(screen.getByText((content, element) => {
+        return element.classList.contains('score-value') && 
+               element.parentElement.querySelector('.score-label').textContent === 'Round' &&
+               content.includes('0');
+      })).toBeInTheDocument();      expect(screen.getByText('Auto-Complete Game')).toBeInTheDocument();
     });
   });
   
@@ -146,9 +149,19 @@ describe('App', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('Round: 0 / 5')).toBeInTheDocument();
-      expect(screen.getByText('Player 1: 0 points')).toBeInTheDocument();
-      expect(screen.getByText('Player 2: 0 points')).toBeInTheDocument();
+      expect(screen.getByText((content, element) => {
+        return element.classList.contains('score-value') && 
+               element.parentElement.querySelector('.score-label').textContent === 'Round' &&
+               content.includes('0');
+      })).toBeInTheDocument();
+      expect(screen.getByText((content, element) => {
+        return element.classList.contains('score-value') && content === '0' &&
+               element.parentElement.querySelector('.score-label').textContent === 'Player 1';
+      })).toBeInTheDocument();
+      expect(screen.getByText((content, element) => {
+        return element.classList.contains('score-value') && content === '0' &&
+               element.parentElement.querySelector('.score-label').textContent === 'Player 2';
+      })).toBeInTheDocument();    
     });
   });
 

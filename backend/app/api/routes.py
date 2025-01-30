@@ -114,26 +114,18 @@ def get_game_state(game_id: str):
     })
 
 @bp.route('/game/<game_id>/move', methods=['POST'])
-def make_move(game_id: str):
+async def make_move(game_id: str):
     """Process a round in the specified game"""
     game = game_storage.get_game(game_id)
     if not game:
         return jsonify({"error": "Game not found"}), 404
     
     try:
-        # Process the round asynchronously
-        result = run_async(game.process_round())
-        
+        # Process the round - moves come from strategies
+        result = await game.process_round()
         if not result:
             return jsonify({"error": "Failed to process round"}), 500
-
-        # Check if game is over
-        if game.is_game_over():
-            # Save to history and remove from active games
-            game_history.save_game(game_id, game)
-            game_storage.remove_game(game_id)
-            
-        # Prepare response with AI-specific information
+        
         response = {
             "round_number": result.round_number,
             "player1_move": result.player1_move.value,
@@ -144,20 +136,28 @@ def make_move(game_id: str):
             "scores": {
                 "player1": game.player1_total_score,
                 "player2": game.player2_total_score
+            },
+            # Add reasoning
+            "reasoning": {
+                "player1": result.player1_reasoning,
+                "player2": result.player2_reasoning
             }
         }
 
-        # Add AI-specific information if present
+        # Add token usage if present
         if result.token_usage:
             response["token_usage"] = {
                 "prompt_tokens": result.token_usage.prompt_tokens,
                 "completion_tokens": result.token_usage.completion_tokens,
                 "total_tokens": result.token_usage.total_tokens
             }
-        
-        if result.api_errors:
-            response["api_errors"] = result.api_errors
 
+        # Check if game is over
+        if game.is_game_over():
+            # Save to history and remove from active games
+            game_history.save_game(game_id, game)
+            game_storage.remove_game(game_id)
+            
         return jsonify(response)
         
     except ValueError as e:
@@ -165,70 +165,8 @@ def make_move(game_id: str):
     except Exception as e:
         return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
       
-@bp.route('/game/<game_id>/complete', methods=['POST'])
-def complete_game(game_id: str):
-    """Auto-complete all remaining rounds in the game"""
-    game = game_storage.get_game(game_id)
-    if not game:
-        return jsonify({"error": "Game not found"}), 404
-        
-    try:
-        # Run all remaining rounds asynchronously
-        round_results = run_async(game.run_all_rounds())
-        
-        # Save completed game to history and remove from active storage
-        game_history.save_game(game_id, game)
-        game_storage.remove_game(game_id)
-        
-        # Prepare response with AI-specific information
-        rounds_data = []
-        total_tokens = 0
-        api_errors = []
-
-        for r in round_results:
-            round_data = {
-                "round_number": r.round_number,
-                "player1_move": r.player1_move.value,
-                "player2_move": r.player2_move.value,
-                "player1_score": r.player1_score,
-                "player2_score": r.player2_score
-            }
-            
-            if r.token_usage:
-                round_data["token_usage"] = {
-                    "prompt_tokens": r.token_usage.prompt_tokens,
-                    "completion_tokens": r.token_usage.completion_tokens,
-                    "total_tokens": r.token_usage.total_tokens
-                }
-                total_tokens += r.token_usage.total_tokens
-                
-            if r.api_errors:
-                round_data["api_errors"] = r.api_errors
-                api_errors.append(r.api_errors)
-                
-            rounds_data.append(round_data)
-
-        response = {
-            "rounds": rounds_data,
-            "final_scores": {
-                "player1": game.player1_total_score,
-                "player2": game.player2_total_score  
-            }
-        }
-
-        if total_tokens > 0:
-            response["total_token_usage"] = total_tokens
-        
-        if api_errors:
-            response["api_errors"] = api_errors
-
-        return jsonify(response)
-        
-    except ValueError as e:
-        return jsonify({"error": str(e)}), 400
-
 @bp.route('/game/<game_id>/history', methods=['GET'])
-def get_game_history(game_id: str):
+async def get_game_history(game_id: str):
     """Get full history of specified game"""
     # First check active games
     game = game_storage.get_game(game_id)
@@ -242,7 +180,12 @@ def get_game_history(game_id: str):
                 "player1_reasoning": r.player1_reasoning,
                 "player2_reasoning": r.player2_reasoning,
                 "player1_score": r.player1_score,
-                "player2_score": r.player2_score
+                "player2_score": r.player2_score,
+                "token_usage": {
+                    "prompt_tokens": r.token_usage.prompt_tokens,
+                    "completion_tokens": r.token_usage.completion_tokens,
+                    "total_tokens": r.token_usage.total_tokens
+                } if r.token_usage else None
             }
             for r in game.rounds
         ]
@@ -263,6 +206,11 @@ def get_game_history(game_id: str):
                 "player1": game.player1_total_score,
                 "player2": game.player2_total_score
             },
+            "ai_info": {
+                "player1_model": game.player1_model,
+                "player2_model": game.player2_model,
+                "has_ai_player": game.has_ai_player
+            },
             "payoff_matrix": matrix
         })
     
@@ -273,7 +221,68 @@ def get_game_history(game_id: str):
             "game_id": game_id,
             "is_active": False,
             "rounds": completed_game["rounds"],
-            "final_scores": completed_game["final_scores"]
+            "final_scores": completed_game["final_scores"],
+            "ai_info": completed_game.get("ai_info", {})
         })
         
     return jsonify({"error": "Game not found"}), 404
+
+@bp.route('/game/<game_id>/complete', methods=['POST'])
+async def complete_game(game_id: str):
+    """Auto-complete all remaining rounds in the game"""
+    game = game_storage.get_game(game_id)
+    if not game:
+        return jsonify({"error": "Game not found"}), 404
+        
+    try:
+        # Run all remaining rounds
+        round_results = await game.run_all_rounds()
+        if not round_results:
+            return jsonify({"error": "Failed to complete game"}), 500
+            
+        # Format rounds with AI information
+        formatted_rounds = [
+            {
+                "round_number": r.round_number,
+                "player1_move": r.player1_move.value,
+                "player2_move": r.player2_move.value,
+                "player1_reasoning": r.player1_reasoning,
+                "player2_reasoning": r.player2_reasoning,
+                "player1_score": r.player1_score,
+                "player2_score": r.player2_score,
+                "token_usage": {
+                    "prompt_tokens": r.token_usage.prompt_tokens,
+                    "completion_tokens": r.token_usage.completion_tokens,
+                    "total_tokens": r.token_usage.total_tokens
+                } if r.token_usage else None
+            }
+            for r in round_results
+        ]
+
+        # Add AI information for final response
+        response = {
+            "rounds": formatted_rounds,
+            "final_scores": {
+                "player1": game.player1_total_score,
+                "player2": game.player2_total_score
+            }
+        }
+
+        # Add AI info if present
+        if game.has_ai_player:
+            response["ai_info"] = {
+                "player1_model": game.player1_model,
+                "player2_model": game.player2_model,
+                "has_ai_player": True
+            }
+        
+        # Important: Save completed game and clean up
+        game_history.save_game(game_id, game)
+        game_storage.remove_game(game_id)
+        
+        return jsonify(response)
+        
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
