@@ -1,9 +1,11 @@
 import os
 from dotenv import load_dotenv
 from enum import Enum
-from typing import Dict, Type
+from typing import Dict, Type, Optional
+from app.models.types import MatrixType
 
 from .base import BaseStrategy
+from .optimal_strategy import OptimalStrategy
 from .always_cooperate import AlwaysCooperate
 from .always_defect import AlwaysDefect
 from .tit_for_tat import TitForTat
@@ -17,6 +19,7 @@ load_dotenv()
 
 class StrategyType(Enum):
     """Available opponent strategies"""
+    OPTIMAL = "optimal"
     ALWAYS_COOPERATE = "always_cooperate"
     ALWAYS_DEFECT = "always_defect"
     TIT_FOR_TAT = "tit_for_tat"
@@ -28,6 +31,7 @@ class StrategyType(Enum):
 
 # Registry mapping strategy types to their implementing classes
 _strategy_registry: Dict[StrategyType, Type[BaseStrategy]] = {
+    StrategyType.OPTIMAL: OptimalStrategy,
     StrategyType.ALWAYS_COOPERATE: AlwaysCooperate,
     StrategyType.ALWAYS_DEFECT: AlwaysDefect,
     StrategyType.TIT_FOR_TAT: TitForTat,
@@ -54,13 +58,14 @@ def register_strategy(strategy_type: StrategyType, strategy_class: Type[BaseStra
     _strategy_registry[strategy_type] = strategy_class
 
 
-def create_strategy(strategy_type: StrategyType, is_player1: bool) -> BaseStrategy:
+def create_strategy(strategy_type: StrategyType, is_player1: bool, matrix_type: Optional[MatrixType] = None) -> BaseStrategy:
     """
     Create a new instance of the specified strategy
     
     Args:
         strategy_type: The type of strategy to create
         is_player1: Whether this strategy is for player 1 (True) or player 2 (False)
+        matrix_type: Optional matrix type for strategies that need it (like OptimalStrategy)
     
     Returns:
         BaseStrategy: A new instance of the requested strategy
@@ -79,6 +84,10 @@ def create_strategy(strategy_type: StrategyType, is_player1: bool) -> BaseStrate
             api_key=api_key
         )
     
+    if strategy_type == StrategyType.OPTIMAL:
+        if matrix_type is None:
+            raise ValueError("matrix_type must be provided for OptimalStrategy")
+        return OptimalStrategy(matrix_type=matrix_type, is_player1=is_player1)
     # Handle other strategies normally
     if strategy_type not in _strategy_registry:
         raise ValueError(f"Strategy {strategy_type.value} is not implemented yet")

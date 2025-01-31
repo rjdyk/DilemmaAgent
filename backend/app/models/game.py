@@ -1,6 +1,6 @@
 from typing import List, Dict, Optional, Tuple
 from datetime import datetime
-from app.models.types import Move, RoundResult, PayoffMatrix, TokenUsage, OptimalStrategy
+from app.models.types import Move, RoundResult, PayoffMatrix, TokenUsage, OptimalStrategy, MatrixType, MATRIX_PAYOFFS
 from app.strategies.base import BaseStrategy
 from app.strategies.ai_strategy import AIStrategy
 
@@ -19,21 +19,17 @@ class Game:
 
         self.has_ai_player = isinstance(player1_strategy, AIStrategy) or isinstance(player2_strategy, AIStrategy)
         self.ai_errors: Dict[str, str] = {}  # Track AI errors by player
-        
-        # Use provided matrix or default
-        default_matrix = PayoffMatrix(
-            cooperate_cooperate=(3, 3),
-            cooperate_defect=(0, 5),
-            defect_cooperate=(5, 0),
-            defect_defect=(1, 1),
-            optimal_strategy=OptimalStrategy(
-                cooperation_rate=0.0,
-                expected_score_per_round=(1, 1),
-                description="Pure defection is dominant strategy"
-            )
-        )
 
-        self.payoff_matrix = payoff_matrix or default_matrix
+        if payoff_matrix is None:
+            self.matrix_type = MatrixType.BASELINE
+            self.payoff_matrix = MATRIX_PAYOFFS[MatrixType.BASELINE]
+        else:
+            # Find matrix type from payoff matrix
+            self.matrix_type = next(
+                (k for k, v in MATRIX_PAYOFFS.items() if v == payoff_matrix),
+                MatrixType.BASELINE
+            )
+            self.payoff_matrix = payoff_matrix
         
         self.player1_model = (
             player1_strategy.model_name if isinstance(player1_strategy, AIStrategy) else None

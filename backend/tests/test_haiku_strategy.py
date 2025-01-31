@@ -28,7 +28,9 @@ def sample_round_result():
         player1_reasoning="Test reasoning",
         player2_reasoning="Test reasoning",
         player1_score=0,
-        player2_score=5
+        player2_score=5,
+        cumulative_player1_score=0,
+        cumulative_player2_score=5,
     )
 
 # Strategy initialization tests

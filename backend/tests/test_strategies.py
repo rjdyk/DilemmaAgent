@@ -21,7 +21,9 @@ def create_round_result(round_num: int, p1_move: Move, p2_move: Move) -> RoundRe
         player1_score=p1_score,
         player2_score=p2_score,
         player1_reasoning="test",
-        player2_reasoning="test"
+        player2_reasoning="test",
+        cumulative_player1_score=0,
+        cumulative_player2_score=5,
     )
 
 class TestTitForTat:

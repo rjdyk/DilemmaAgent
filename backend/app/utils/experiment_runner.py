@@ -24,8 +24,9 @@ class ExperimentConfig:
         if self.strategies_to_test is None:
             # Default strategies to test against
             self.strategies_to_test = [
-                # StrategyType.ALWAYS_COOPERATE,
-                # StrategyType.ALWAYS_DEFECT,
+                StrategyType.ALWAYS_COOPERATE,
+                StrategyType.ALWAYS_DEFECT,
+                StrategyType.OPTIMAL,
                 StrategyType.TIT_FOR_TAT,
                 StrategyType.RANDOM,
                 StrategyType.CLAUDE_HAIKU  # LLM vs LLM
