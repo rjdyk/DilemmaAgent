@@ -1,25 +1,121 @@
 # TODO
 
+# Wednesday TODO - Reasoning Infrastructure
+
+## Game Class Updates
+- [x] Clean up games.py with reasoning
+- [ ] Add separate reasoning storage in RoundResult
+- [x] Update process_round() to handle structured reasoning
+- [ ] Add reasoning analysis utilities
+
+## Frontend Updates
+- [ ] Add reasoning display to GameBoard
+- [ ] Create ReasoningHistory component
+- [ ] Style reasoning display
+
+## Storage Updates
+- [ ] Update game_history.json structure
+- [ ] Add reasoning to GameHistory class
+- [ ] Add reasoning serialization/deserialization
+
+## Testing
+- [ ] Add tests for reasoning storage
+- [ ] Test reasoning display
+- [ ] Verify history storage works
+
+# Thursday TODO - Experimental Infrastructure
+
+## ExperimentRunner Development
+- [ ] Create ExperimentRunner class
+- [ ] Add batch game execution
+- [ ] Implement experiment configuration
+- [ ] Add results collection
+
+## Payoff Matrix System
+- [ ] Create PayoffMatrixBuilder
+- [ ] Add preset matrices (mild/severe/asymmetric)
+- [ ] Add matrix validation
+- [ ] Update Game class to use new matrix system
+
+## Analysis Tools
+- [ ] Add cooperation rate calculation
+- [ ] Add score analysis utilities
+- [ ] Create basic statistical functions
+- [ ] Add experiment result export
+
+## Visualization
+- [ ] Create ResultsVisualizer class
+- [ ] Add cooperation rate charts
+- [ ] Add score distribution charts
+- [ ] Add matrix comparison views
+
+# Friday TODO - Experiments & Analysis
+
+## Morning - Run Experiments
+- [ ] Run baseline matrix (100 games)
+- [ ] Run mild penalty matrix (100 games)
+- [ ] Run severe penalty matrix (100 games)
+- [ ] Run asymmetric matrix (100 games)
+
+## Results Processing
+- [ ] Calculate cooperation rates
+- [ ] Analyze score distributions
+- [ ] Compare against optimal play
+- [ ] Extract interesting reasoning patterns
+
+## Analysis Documentation
+- [ ] Document key findings
+- [ ] Create final visualizations
+- [ ] Identify surprising behaviors
+- [ ] Find best examples for blog post
+
+## Blog Preparation
+- [ ] Create outline
+- [ ] Select key screenshots
+- [ ] Prepare data visualizations
+- [ ] Draft key sections
+
+# Saturday TODO - Blog Post
+
+## Writing
+- [ ] Introduction & motivation
+- [ ] Experimental setup
+- [ ] Results & analysis
+- [ ] Implications for AI safety
+- [ ] Future work
+
+## Repository
+- [ ] Clean up code
+- [ ] Add documentation
+- [ ] Include experiment configs
+- [ ] Add result examples
+
+## Final Tasks
+- [ ] Proofread blog post
+- [ ] Double-check visualizations
+- [ ] Verify all links work
+- [ ] Add references
+
 # Phase 3
 ## Implementation Plan
 
 ### Phase 3.1: Core AI Infrastructure
-1. Create AIStrategy base class
-2. Implement token tracking
-3. Add basic error handling
-4. Update game logic
+[x] Create AIStrategy base class
+[x] Implement token tracking
+[x] Add basic error handling
+[x] Update game logic
 
 ### Phase 3.2: Model Integration
-1. Implement HaikuStrategy
-2. Add prompt management
-3. Test API integration
-4. Add failure handling
+[x] Implement HaikuStrategy
+[x] Add prompt management
+[x] Test API integration
+[x] Add failure handling
 
 ### Phase 3.3: Enhanced Features
-1. Add context management
-2. Implement history truncation
-3. Add detailed logging
-4. Update game state tracking
+[ ] Add context management
+[ ] Implement history truncation
+[ ] Add detailed logging
+[ ] Update game state tracking
 
 ## Future Work (Out of Scope for MVP3)
 
