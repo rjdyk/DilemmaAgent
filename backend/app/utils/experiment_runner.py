@@ -26,7 +26,6 @@ class ExperimentConfig:
             self.strategies_to_test = [
                 StrategyType.ALWAYS_COOPERATE,
                 StrategyType.ALWAYS_DEFECT,
-                StrategyType.OPTIMAL,
                 StrategyType.TIT_FOR_TAT,
                 StrategyType.RANDOM,
                 StrategyType.CLAUDE_HAIKU  # LLM vs LLM
@@ -40,6 +39,9 @@ class ExperimentRunner:
         self.experiment_id = str(uuid.uuid4())
         self.start_time = None
         self.end_time = None
+
+    def set_progress_callback(self, callback):
+        self.progress_callback = callback
         
     async def run_full_experiment(self) -> ExperimentResult:
         """Run complete experiment testing AI against all specified strategies"""
@@ -79,13 +81,14 @@ class ExperimentRunner:
         )
         
         # Save results
-        await self.storage.save_experiment(result)
+        self.storage.save_experiment(result)
         
         return result
         
     async def _run_strategy_games(self, opponent_strategy: StrategyType) -> List[GameResult]:
         """Run batch of games against a specific strategy"""
         games: List[GameResult] = []
+
         
         for game_num in range(self.config.num_games):
             # Create strategies
@@ -99,6 +102,9 @@ class ExperimentRunner:
                 max_rounds=self.config.num_rounds,
                 payoff_matrix=self.payoff_matrix
             )
+
+            if hasattr(self, 'progress_callback'):
+                self.progress_callback(opponent_strategy.value, game_num + 1, game.current_round)
             
             game_result = await self._run_single_game(game)
             games.append(game_result)

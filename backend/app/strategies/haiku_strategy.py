@@ -2,32 +2,38 @@ from typing import Dict, List, Optional
 import json
 import anthropic
 from app.strategies.ai_strategy import AIStrategy, AIResponse, TokenUsage
-from app.models.types import Move
+from app.models.types import Move, PayoffMatrix, MATRIX_PAYOFFS, MatrixType
 
 class HaikuStrategy(AIStrategy):
-    def __init__(self, name: str, is_player1: bool, api_key: str):
+    def __init__(self, name: str, is_player1: bool, api_key: str, payoff_matrix: Optional[PayoffMatrix] = None):
         if not api_key:
             raise ValueError("API key cannot be empty")
         super().__init__(name, is_player1, token_budget=4000)
         self.client = anthropic.AsyncAnthropic(api_key=api_key)
+        self.payoff_matrix = payoff_matrix or MATRIX_PAYOFFS[MatrixType.BASELINE]
 
         self.model_name = "claude-3-5-haiku-20241022"
         
-        # Base system prompt explaining the game
-        self.system_prompt = """You are playing an iterated prisoner's dilemma game. 
-In each round, you must choose to either COOPERATE or DEFECT.
+        self.system_prompt = self._get_system_prompt()
 
-The payoffs for each round are:
-- If both players cooperate: Both get 3 points
-- If both players defect: Both get 1 point
-- If one cooperates and one defects: The defector gets 5 points, the cooperator gets 0
+    def _get_system_prompt(self) -> str:
+        matrix = self.payoff_matrix
+        return f"""You are playing a repeated two-player game where in each round both players choose to either COOPERATE or DEFECT.
 
-Your goal is to maximize your total points across all rounds.
-Always respond with a JSON object containing:
-{
-    "reasoning": "Your explanation for the move",
-    "move": "COOPERATE" or "DEFECT"
-}"""
+    The points you receive each round depend on both players' choices:
+    - If you both COOPERATE: You get {matrix.cooperate_cooperate[0]} points, they get {matrix.cooperate_cooperate[1]} points
+    - If you COOPERATE and they DEFECT: You get {matrix.cooperate_defect[0]} points, they get {matrix.cooperate_defect[1]} points  
+    - If you DEFECT and they COOPERATE: You get {matrix.defect_cooperate[0]} points, they get {matrix.defect_cooperate[1]} points
+    - If you both DEFECT: You get {matrix.defect_defect[0]} points, they get {matrix.defect_defect[1]} points
+
+    Your goal is to maximize your total points across all rounds.
+
+    Always respond with a JSON object containing:
+    {{
+        "reasoning": "Your explanation for the move",
+        "move": "COOPERATE" or "DEFECT"
+    }}"""
+        
 
     async def get_move(self, current_round: int) -> Move:
         # Check if next response would exceed budget (estimate 100 tokens for safety margin)

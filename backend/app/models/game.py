@@ -66,7 +66,8 @@ class Game:
                 self.ai_errors["player1"] = self.player1_strategy.last_error
         else:
             move = self.player1_strategy.get_move(self.current_round)
-        print(f"Player 1 ({self.player1_strategy.name}) move: {move}")
+        
+        # print(f"Player 1 ({self.player1_strategy.name}) move: {move}")
         return move
 
     async def get_player2_move(self) -> Move:
@@ -77,7 +78,7 @@ class Game:
                 self.ai_errors["player2"] = self.player2_strategy.last_error
         else:
             move = self.player2_strategy.get_move(self.current_round)
-        print(f"Player 2 ({self.player2_strategy.name}) move: {move}")
+        # print(f"Player 2 ({self.player2_strategy.name}) move: {move}")
         return move
 
     async def process_round(self) -> Optional[RoundResult]:
