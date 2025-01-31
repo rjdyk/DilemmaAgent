@@ -6,7 +6,7 @@
 - [x] Clean up games.py with reasoning
 - [ ] Add separate reasoning storage in RoundResult
 - [x] Update process_round() to handle structured reasoning
-- [ ] Add reasoning analysis utilities
+- [x] Add reasoning analysis utilities
 
 ## Frontend Updates
 - [ ] Add reasoning display to GameBoard

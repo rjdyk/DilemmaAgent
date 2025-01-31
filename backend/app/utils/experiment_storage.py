@@ -6,7 +6,10 @@ import pandas as pd
 from dataclasses import dataclass, asdict
 
 # Local imports
-from app.models.types import PayoffMatrix, Move, RoundResult
+from app.models.types import (
+    PayoffMatrix, Move, RoundResult, OptimalStrategy,
+    ExperimentMetrics, GameResult, ExperimentResult
+)
 
 @dataclass
 class ExperimentMetrics:
@@ -14,7 +17,7 @@ class ExperimentMetrics:
     points_below_optimal: float
     learning_rate: float
     avg_score: float
-    total_rounds: int
+    total_rounds: int 
 
 @dataclass 
 class GameResult:
@@ -145,3 +148,88 @@ class ExperimentStorage:
         """Get summary of all experiments"""
         conn = sqlite3.connect(self.db_path)
         return pd.read_sql("SELECT * FROM experiments", conn)
+    
+    def _construct_experiment_result(self, metadata, games_df) -> ExperimentResult:
+        """
+        Construct ExperimentResult from database metadata and games DataFrame
+        
+        Args:
+            metadata: Row tuple from SQLite experiments table
+            games_df: DataFrame containing detailed game data
+        """
+        # Convert metadata row to dict for easier access
+        meta_dict = {
+            "experiment_id": metadata[0],
+            "matrix_type": metadata[1],
+            "player1_strategy": metadata[2],
+            "player2_strategy": metadata[3],
+            "payoff_matrix": eval(metadata[4]),  # Careful with eval!
+            "start_time": datetime.fromisoformat(metadata[5]),
+            "end_time": datetime.fromisoformat(metadata[6]),
+            "total_games": metadata[7],
+            "cooperation_rate": metadata[8],
+            "points_below_optimal": metadata[9],
+            "learning_rate": metadata[10]
+        }
+        
+        # Group DataFrame by game_id to reconstruct games
+        games = []
+        for game_id, game_df in games_df.groupby('game_id'):
+            # Convert moves back to Move enum
+            rounds = [
+                RoundResult(
+                    round_number=row['round_number'],
+                    player1_move=Move(row['player1_move']),
+                    player2_move=Move(row['player2_move']),
+                    player1_reasoning=row['player1_reasoning'],
+                    player2_reasoning=row['player2_reasoning'],
+                    player1_score=row['player1_score'],
+                    player2_score=row['player2_score'],
+                    cumulative_player1_score=row['cumulative_player1_score'],
+                    cumulative_player2_score=row['cumulative_player2_score']
+                )
+                for _, row in game_df.iterrows()
+            ]
+            
+            # Calculate final scores from last round
+            final_scores = (
+                game_df.iloc[-1]['cumulative_player1_score'],
+                game_df.iloc[-1]['cumulative_player2_score']
+            )
+            
+            # Calculate cooperation rate
+            coop_moves = (
+                (game_df['player1_move'] == 'cooperate').sum() +
+                (game_df['player2_move'] == 'cooperate').sum()
+            )
+            total_moves = len(game_df) * 2
+            cooperation_rate = coop_moves / total_moves
+            
+            games.append(GameResult(
+                game_id=game_id,
+                rounds=rounds,
+                final_scores=final_scores,
+                cooperation_rate=cooperation_rate,
+                total_rounds=len(rounds)
+            ))
+        
+        # Construct metrics from metadata
+        metrics = ExperimentMetrics(
+            cooperation_rate=meta_dict['cooperation_rate'],
+            points_below_optimal=meta_dict['points_below_optimal'],
+            learning_rate=meta_dict['learning_rate'],
+            avg_score=sum(g.final_scores[0] for g in games) / len(games),
+            total_rounds=sum(g.total_rounds for g in games)
+        )
+        
+        return ExperimentResult(
+            experiment_id=meta_dict['experiment_id'],
+            matrix_type=meta_dict['matrix_type'],
+            player1_strategy=meta_dict['player1_strategy'],
+            player2_strategy=meta_dict['player2_strategy'],
+            payoff_matrix=meta_dict['payoff_matrix'],
+            start_time=meta_dict['start_time'],
+            end_time=meta_dict['end_time'],
+            games=games,
+            metrics=metrics
+        )
