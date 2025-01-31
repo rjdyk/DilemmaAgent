@@ -10,6 +10,8 @@ class HaikuStrategy(AIStrategy):
             raise ValueError("API key cannot be empty")
         super().__init__(name, is_player1, token_budget=4000)
         self.client = anthropic.AsyncAnthropic(api_key=api_key)
+
+        self.model_name = "claude-3-5-haiku-20241022"
         
         # Base system prompt explaining the game
         self.system_prompt = """You are playing an iterated prisoner's dilemma game. 

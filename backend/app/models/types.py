@@ -15,6 +15,7 @@ class TokenUsage:
     completion_tokens: int
     total_tokens: int
     
+@dataclass
 class RoundResult:
     round_number: int
     player1_move: Move

@@ -38,3 +38,32 @@ yarn-error.log*
 # Operating System
 .DS_Store
 Thumbs.db
+
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+
+# IPython
+profile_default/
+ipython_config.py
+
+# Jupyter temporary files
+.jupyter/
+.ipython/
+.local/share/jupyter/
+
+# Virtual environment (if not already there)
+venv/
+.venv/
+ENV/
+
+# Experiment data and results
+experiment_data/
+*.db
+game_history.json
+
+# Misc notebook related
+.nbconvert/
+.ipynb_snapshots/
+jupyter_cache/

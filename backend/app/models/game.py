@@ -1,6 +1,6 @@
 from typing import List, Dict, Optional, Tuple
 from datetime import datetime
-from app.models.types import Move, RoundResult, PayoffMatrix, TokenUsage
+from app.models.types import Move, RoundResult, PayoffMatrix, TokenUsage, OptimalStrategy
 from app.strategies.base import BaseStrategy
 from app.strategies.ai_strategy import AIStrategy
 
@@ -25,8 +25,14 @@ class Game:
             cooperate_cooperate=(3, 3),
             cooperate_defect=(0, 5),
             defect_cooperate=(5, 0),
-            defect_defect=(1, 1)
+            defect_defect=(1, 1),
+            optimal_strategy=OptimalStrategy(
+                cooperation_rate=0.0,
+                expected_score_per_round=(1, 1),
+                description="Pure defection is dominant strategy"
+            )
         )
+
         self.payoff_matrix = payoff_matrix or default_matrix
         
         self.player1_model = (
@@ -114,6 +120,9 @@ class Game:
         self.player1_total_score += player1_score
         self.player2_total_score += player2_score
 
+        cumulative_player1_score = self.player1_total_score
+        cumulative_player2_score = self.player2_total_score
+
         # Get token usage if applicable
         token_usage = None
         if isinstance(self.player1_strategy, AIStrategy) or isinstance(self.player2_strategy, AIStrategy):
@@ -140,6 +149,8 @@ class Game:
             player2_reasoning=player2_reasoning,
             player1_score=player1_score,
             player2_score=player2_score,
+            cumulative_player1_score=cumulative_player1_score,  # Pass cumulative score
+            cumulative_player2_score=cumulative_player2_score,  # Pass cumulative score
             token_usage=token_usage,
             api_errors=None  # The strategies handle their own errors
         )
