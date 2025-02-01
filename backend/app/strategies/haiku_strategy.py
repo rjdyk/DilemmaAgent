@@ -3,6 +3,7 @@ import json
 import anthropic
 from app.strategies.ai_strategy import AIStrategy, AIResponse, TokenUsage
 from app.models.types import Move, PayoffMatrix, MATRIX_PAYOFFS, MatrixType
+import asyncio
 
 class HaikuStrategy(AIStrategy):
     def __init__(self, name: str, is_player1: bool, api_key: str, payoff_matrix: Optional[PayoffMatrix] = None):
@@ -57,15 +58,20 @@ Game history:
 What is your next move? Remember to respond with a JSON object containing your move and reasoning."""
 
         try:
-            response = await self.client.messages.create(
-                model="claude-3-haiku-20240307",
-                max_tokens=150,
-                system=self.system_prompt,
-                messages=[{
-                    "role": "user",
-                    "content": user_prompt
-                }]
+            print(f"\nRequesting AI response for round {current_round + 1}...")  # Add logging
+            response = await asyncio.wait_for(
+                self.client.messages.create(
+                    model="claude-3-haiku-20240307",
+                    max_tokens=150,
+                    system=self.system_prompt,
+                    messages=[{
+                        "role": "user",
+                        "content": user_prompt
+                    }]
+                ),
+                timeout=30.0  # Add 30 second timeout
             )
+            print(f"Received AI response for round {current_round + 1}")  # Add logging
             
             # Parse the response
             content = response.content[0].text
@@ -74,6 +80,7 @@ What is your next move? Remember to respond with a JSON object containing your m
                 move = Move(move_data["move"].lower())
                 reasoning = move_data["reasoning"]
             except (json.JSONDecodeError, KeyError, ValueError) as e:
+                print(f"Error parsing AI response: {str(e)}")  # Add logging
                 raise ValueError(f"Failed to parse AI response: {str(e)}")
                 
             # Calculate token usage
@@ -89,7 +96,11 @@ What is your next move? Remember to respond with a JSON object containing your m
                 token_usage=token_usage
             )
             
+        except asyncio.TimeoutError:
+            print("AI request timed out after 30 seconds")  # Add logging
+            raise ValueError("AI request timed out")
         except anthropic.APIError as e:
+            print(f"Anthropic API error: {str(e)}")  # Add logging
             raise ValueError(f"Anthropic API error: {str(e)}")
 
     def _format_history(self) -> str:

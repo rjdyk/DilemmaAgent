@@ -24,10 +24,11 @@ class ExperimentConfig:
         if self.strategies_to_test is None:
             # Default strategies to test against
             self.strategies_to_test = [
-                StrategyType.ALWAYS_COOPERATE,
+                #StrategyType.ALWAYS_COOPERATE,
                 StrategyType.ALWAYS_DEFECT,
                 StrategyType.TIT_FOR_TAT,
                 StrategyType.RANDOM,
+                StrategyType.OPTIMAL,
                 StrategyType.CLAUDE_HAIKU  # LLM vs LLM
             ]
 
@@ -46,6 +47,8 @@ class ExperimentRunner:
     async def run_full_experiment(self) -> ExperimentResult:
         """Run complete experiment testing AI against all specified strategies"""
         self.start_time = datetime.now()
+        
+        print(f"\nStarting test run at {datetime.now().strftime('%H:%M:%S')}")
         logger.info(f"Starting experiment {self.experiment_id} with matrix {self.config.matrix_type}")
         
         all_games: List[GameResult] = []
@@ -54,20 +57,47 @@ class ExperimentRunner:
         for opponent_strategy in self.config.strategies_to_test:
             logger.info(f"Testing against {opponent_strategy}")
             
-            # For LLM vs LLM, both players use Claude
-            if opponent_strategy == StrategyType.CLAUDE_HAIKU:
-                games = await self._run_llm_vs_llm_games()
-            else:
-                games = await self._run_strategy_games(opponent_strategy)
-            
-            all_games.extend(games)
-            
+            try:
+                # For LLM vs LLM, both players use Claude
+                if opponent_strategy == StrategyType.CLAUDE_HAIKU:
+                    games = await self._run_llm_vs_llm_games()
+                else:
+                    games = await self._run_strategy_games(opponent_strategy)
+                
+                all_games.extend(games)
+                
+                # Save intermediate results after each strategy
+                self.end_time = datetime.now()
+                intermediate_metrics = self._calculate_experiment_metrics(all_games)
+                
+                intermediate_result = ExperimentResult(
+                    experiment_id=self.experiment_id,
+                    matrix_type=self.config.matrix_type.value,
+                    player1_strategy="claude_haiku",
+                    player2_strategy="multiple",
+                    payoff_matrix=self.payoff_matrix,
+                    start_time=self.start_time,
+                    end_time=self.end_time,
+                    games=all_games,
+                    metrics=intermediate_metrics
+                )
+                
+                # Save intermediate results
+                self.storage.save_experiment(intermediate_result)
+                print(f"\nSaved intermediate results after strategy: {opponent_strategy.value}")
+                
+            except Exception as e:
+                logger.error(f"Error testing against {opponent_strategy}: {str(e)}")
+                print(f"\nError with strategy {opponent_strategy.value}: {str(e)}")
+                # Continue with next strategy instead of failing entire experiment
+                continue
+        
         self.end_time = datetime.now()
         
-        # Calculate overall metrics
+        # Calculate final metrics
         metrics = self._calculate_experiment_metrics(all_games)
         
-        # Create experiment result
+        # Create final experiment result
         result = ExperimentResult(
             experiment_id=self.experiment_id,
             matrix_type=self.config.matrix_type.value,
@@ -80,8 +110,9 @@ class ExperimentRunner:
             metrics=metrics
         )
         
-        # Save results
+        # Final save
         self.storage.save_experiment(result)
+        print("\nSaved final experiment results")
         
         return result
         
@@ -89,11 +120,18 @@ class ExperimentRunner:
         """Run batch of games against a specific strategy"""
         games: List[GameResult] = []
 
+        print(f"\nStarting games against {opponent_strategy.value}")  # Add logging
         
         for game_num in range(self.config.num_games):
+            print(f"\nStarting game {game_num + 1}")  # Add logging
+            
             # Create strategies
             ai_strategy = create_strategy(StrategyType.CLAUDE_HAIKU, is_player1=True)
-            opponent = create_strategy(opponent_strategy, is_player1=False)
+            opponent = create_strategy(
+                opponent_strategy, 
+                is_player1=False,
+                matrix_type=self.config.matrix_type  # Add matrix_type for OptimalStrategy
+            )
             
             # Create and run game
             game = Game(
@@ -106,9 +144,15 @@ class ExperimentRunner:
             if hasattr(self, 'progress_callback'):
                 self.progress_callback(opponent_strategy.value, game_num + 1, game.current_round)
             
-            game_result = await self._run_single_game(game)
-            games.append(game_result)
+            try:
+                game_result = await self._run_single_game(game)
+                games.append(game_result)
+                print(f"Completed game {game_num + 1}")  # Add logging
+            except Exception as e:
+                print(f"Error in game {game_num + 1}: {str(e)}")  # Add logging
+                raise
             
+        print(f"Completed all games against {opponent_strategy.value}")  # Add logging
         return games
             
     async def _run_llm_vs_llm_games(self) -> List[GameResult]:
@@ -117,8 +161,16 @@ class ExperimentRunner:
         
         for game_num in range(self.config.num_games):
             # Create two AI strategies
-            ai_player1 = create_strategy(StrategyType.CLAUDE_HAIKU, is_player1=True)
-            ai_player2 = create_strategy(StrategyType.CLAUDE_HAIKU, is_player1=False)
+            ai_player1 = create_strategy(
+                StrategyType.CLAUDE_HAIKU, 
+                is_player1=True,
+                matrix_type=self.config.matrix_type
+            )
+            ai_player2 = create_strategy(
+                StrategyType.CLAUDE_HAIKU, 
+                is_player1=False,
+                matrix_type=self.config.matrix_type
+            )
             
             game = Game(
                 player1_strategy=ai_player1,

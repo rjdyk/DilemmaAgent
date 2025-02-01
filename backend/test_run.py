@@ -10,12 +10,11 @@ async def test_run():
     print(f"\nStarting test run at {datetime.now().strftime('%H:%M:%S')}")
     
     config = ExperimentConfig(
-        matrix_type=MatrixType.BASELINE,
+        matrix_type=MatrixType.MIXED_30,
         num_games=5,
         num_rounds=5,
         strategies_to_test=[
-            StrategyType.ALWAYS_COOPERATE,
-            StrategyType.ALWAYS_DEFECT
+            StrategyType.OPTIMAL,
         ]
     )
     storage = ExperimentStorage()

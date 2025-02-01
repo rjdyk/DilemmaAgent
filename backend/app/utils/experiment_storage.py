@@ -47,6 +47,7 @@ class ExperimentStorage:
         
         # Create SQLite database for experiment metadata
         self.db_path = self.data_dir / "experiments.db"
+        self.connection = sqlite3.connect(self.db_path)
         self.init_database()
         
         # Directory for CSV storage
@@ -55,8 +56,7 @@ class ExperimentStorage:
 
     def init_database(self):
         """Initialize SQLite database with required tables"""
-        conn = sqlite3.connect(self.db_path)
-        c = conn.cursor()
+        c = self.connection.cursor()
         
         # Create experiments table
         c.execute('''
@@ -75,36 +75,48 @@ class ExperimentStorage:
             )
         ''')
         
-        conn.commit()
-        conn.close()
+        self.connection.commit()
 
-    def save_experiment(self, result: ExperimentResult):
-        """Save experiment results"""
-        # Save metadata to SQLite
-        conn = sqlite3.connect(self.db_path)
-        c = conn.cursor()
-        
-        c.execute(
-            "INSERT INTO experiments VALUES (?,?,?,?,?,?,?,?,?,?,?)",
-            (
-                result.experiment_id,
-                result.matrix_type,
-                result.player1_strategy,
-                result.player2_strategy,
-                str(result.payoff_matrix),
-                result.start_time,
-                result.end_time,
-                len(result.games),
-                result.metrics.cooperation_rate,
-                result.metrics.points_below_optimal,
-                result.metrics.learning_rate
+    def save_experiment(self, experiment_result: ExperimentResult):
+        """Save experiment results to the database with upsert logic."""
+        with self.connection:
+            c = self.connection.cursor()
+            c.execute(
+                """
+                INSERT INTO experiments (experiment_id, matrix_type, player1_strategy, player2_strategy, 
+                                         payoff_matrix, start_time, end_time, total_games, cooperation_rate, 
+                                         points_below_optimal, learning_rate)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(experiment_id) DO UPDATE SET
+                    matrix_type = excluded.matrix_type,
+                    player1_strategy = excluded.player1_strategy,
+                    player2_strategy = excluded.player2_strategy,
+                    payoff_matrix = excluded.payoff_matrix,
+                    start_time = excluded.start_time,
+                    end_time = excluded.end_time,
+                    total_games = excluded.total_games,
+                    cooperation_rate = excluded.cooperation_rate,
+                    points_below_optimal = excluded.points_below_optimal,
+                    learning_rate = excluded.learning_rate
+                """,
+                (
+                    experiment_result.experiment_id,
+                    experiment_result.matrix_type,
+                    experiment_result.player1_strategy,
+                    experiment_result.player2_strategy,
+                    str(experiment_result.payoff_matrix),  # Ensure this is a string if necessary
+                    experiment_result.start_time,
+                    experiment_result.end_time,
+                    len(experiment_result.games),  # Assuming you want to store the number of games
+                    experiment_result.metrics.cooperation_rate,
+                    experiment_result.metrics.points_below_optimal,
+                    experiment_result.metrics.learning_rate
+                )
             )
-        )
-        conn.commit()
         
         # Save detailed game data as CSV
-        games_df = self._games_to_dataframe(result)
-        csv_path = self.csv_dir / f"{result.experiment_id}_games.csv"
+        games_df = self._games_to_dataframe(experiment_result)
+        csv_path = self.csv_dir / f"{experiment_result.experiment_id}_games.csv"
         games_df.to_csv(csv_path, index=False)
 
     def _games_to_dataframe(self, result: ExperimentResult) -> pd.DataFrame:
@@ -131,8 +143,7 @@ class ExperimentStorage:
     def get_experiment_results(self, experiment_id: str) -> Optional[ExperimentResult]:
         """Retrieve full experiment results"""
         # Get metadata from SQLite
-        conn = sqlite3.connect(self.db_path)
-        c = conn.cursor()
+        c = self.connection.cursor()
         c.execute("SELECT * FROM experiments WHERE experiment_id = ?", (experiment_id,))
         metadata = c.fetchone()
         if not metadata:
@@ -146,8 +157,7 @@ class ExperimentStorage:
 
     def get_experiments_summary(self) -> pd.DataFrame:
         """Get summary of all experiments"""
-        conn = sqlite3.connect(self.db_path)
-        return pd.read_sql("SELECT * FROM experiments", conn)
+        return pd.read_sql("SELECT * FROM experiments", self.connection)
     
     def _construct_experiment_result(self, metadata, games_df) -> ExperimentResult:
         """
