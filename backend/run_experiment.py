@@ -9,8 +9,8 @@ from app.strategies import StrategyType
 async def run_matrix_experiment(matrix_type: MatrixType):
     config = ExperimentConfig(
         matrix_type=matrix_type,
-        num_games=20,
-        num_rounds=5
+        num_games=10,
+        num_rounds=10
     )
     storage = ExperimentStorage()
     runner = ExperimentRunner(config, storage)
@@ -28,7 +28,7 @@ async def main():
     print(f"\nStarting experiments at {datetime.now().strftime('%H:%M:%S')}")
     
     experiment_ids = []
-    for matrix_type in [MatrixType.BASELINE, MatrixType.MIXED_30, MatrixType.MIXED_70]:
+    for matrix_type in [MatrixType.MIXED_30]: # TODO MatrixType.BASELINE, , MatrixType.MIXED_30, MatrixType.MIXED_70]: 
         print(f"\nRunning experiment for matrix: {matrix_type.value}")
         experiment_id = await run_matrix_experiment(matrix_type)
         experiment_ids.append(experiment_id)

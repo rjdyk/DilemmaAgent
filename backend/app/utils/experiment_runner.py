@@ -26,7 +26,7 @@ class ExperimentConfig:
             self.strategies_to_test = [
                 #StrategyType.ALWAYS_COOPERATE,
                 StrategyType.ALWAYS_DEFECT,
-                StrategyType.TIT_FOR_TAT,
+                # StrategyType.TIT_FOR_TAT,
                 StrategyType.RANDOM,
                 StrategyType.OPTIMAL,
                 StrategyType.CLAUDE_HAIKU  # LLM vs LLM

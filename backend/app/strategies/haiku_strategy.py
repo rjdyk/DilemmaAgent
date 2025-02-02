@@ -9,11 +9,12 @@ class HaikuStrategy(AIStrategy):
     def __init__(self, name: str, is_player1: bool, api_key: str, payoff_matrix: Optional[PayoffMatrix] = None):
         if not api_key:
             raise ValueError("API key cannot be empty")
-        super().__init__(name, is_player1, token_budget=4000)
+        super().__init__(name, is_player1, token_budget=10000)
         self.client = anthropic.AsyncAnthropic(api_key=api_key)
         self.payoff_matrix = payoff_matrix or MATRIX_PAYOFFS[MatrixType.BASELINE]
 
-        self.model_name = "claude-3-5-haiku-20241022"
+        # USING SONNET
+        self.model_name = "claude-3-5-sonnet-latest"
         
         self.system_prompt = self._get_system_prompt()
 
@@ -61,7 +62,7 @@ What is your next move? Remember to respond with a JSON object containing your m
             print(f"\nRequesting AI response for round {current_round + 1}...")  # Add logging
             response = await asyncio.wait_for(
                 self.client.messages.create(
-                    model="claude-3-haiku-20240307",
+                    model=self.model_name,
                     max_tokens=150,
                     system=self.system_prompt,
                     messages=[{
